@@ -1,16 +1,19 @@
-package com.sage.sagetoolbox.tool;
+package com.sage.sagetoolbox.service;
+
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Service
 public class ComplementBuilder {
-    static List<Character> highestValueInBasis = List.of(
+    List<Character> highestValueInBasis = List.of(
             '%', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
     );
 
-    static char firstValueAfterOverflow = '0';
+    char firstValueAfterOverflow = '0';
 
-    public static String buildBComplement(String inputString, int basis, int size) {
+    public String buildBComplement(String inputString, int basis, int size) {
         ComplementBuilderErrorTypes illegalParameterInputMessage = checkForIllegalParameterInputs(inputString, basis, size);
 
         if ( illegalParameterInputMessage != null ) {
@@ -27,7 +30,7 @@ public class ComplementBuilder {
         return bComplement;
     }
 
-    private static ComplementBuilderErrorTypes checkForIllegalParameterInputs(String inputString, int basis, int size) {
+    private ComplementBuilderErrorTypes checkForIllegalParameterInputs(String inputString, int basis, int size) {
         if ( inputString == null ) {
             return ComplementBuilderErrorTypes.NO_STRING_INPUT;
         }
@@ -47,14 +50,14 @@ public class ComplementBuilder {
         return null;
     }
 
-    private static boolean checkForIllegalCharactersForBasis(String inputString, int basis, int size) {
+    private boolean checkForIllegalCharactersForBasis(String inputString, int basis, int size) {
         String pattern = basis >= 11 ?
                 "[0-9A-" + highestValueInBasis.get(basis) + "a-" + highestValueInBasis.get(basis).toString().toLowerCase() + "]{0," + size + "}"
                 : "[0-" + highestValueInBasis.get(basis) + "]{0," + size + "}";
         return !inputString.matches(pattern);
     }
 
-    public static String stringToBMinusOneComplement(String inputString, int basis) {
+    public String stringToBMinusOneComplement(String inputString, int basis) {
         StringBuilder bComplementString = new StringBuilder();
 
         for (char c : inputString.toCharArray()) {
@@ -64,7 +67,7 @@ public class ComplementBuilder {
         return bComplementString.toString();
     }
 
-    private static String addOneComplement(String inputString, int basis, int size) {
+    private String addOneComplement(String inputString, int basis, int size) {
         char[] inputStringCharacters = inputString.toCharArray();
 
         int index = inputString.length() - 1;
@@ -85,7 +88,7 @@ public class ComplementBuilder {
         return String.valueOf(inputStringCharacters);
     }
 
-    private static String handleLargerComplementThanInputString(String inputString, int size) {
+    private String handleLargerComplementThanInputString(String inputString, int size) {
         StringBuilder str = new StringBuilder(inputString);
         str.insert(0, toNextValue(firstValueAfterOverflow));
 
@@ -96,27 +99,27 @@ public class ComplementBuilder {
         return String.valueOf(str);
     }
 
-    private static char toNextValue(char inputChar) {
+    private char toNextValue(char inputChar) {
         int nextIndex = highestValueInBasis.indexOf(inputChar) + 1;
 
         return highestValueInBasis.get(nextIndex);
     }
 
-    private static List<Character> buildCompleteSequenceOfBasis(int basis) {
+    private List<Character> buildCompleteSequenceOfBasis(int basis) {
         String hexSequencePreset = "0123456789ABCDEF";
         String sequenceFromBasis = hexSequencePreset.substring(0, basis);
 
         return sequenceFromBasis.chars().mapToObj(e -> (char) e).collect(Collectors.toList());
     }
 
-    public static char getInversionOfValueInBasis(char inputChar, int basis) {
+    public char getInversionOfValueInBasis(char inputChar, int basis) {
         List<Character> sequenceOfBasis = buildCompleteSequenceOfBasis(basis);
         int indexOfChar = sequenceOfBasis.indexOf(inputChar);
 
         return sequenceOfBasis.get(( basis - indexOfChar - 1 ) % basis);
     }
 
-    private static String extendStringToCorrectSize(String inputString, int basis, int size) {
+    private String extendStringToCorrectSize(String inputString, int basis, int size) {
         StringBuilder currentString = new StringBuilder(inputString);
 
         int currentStringSize = currentString.length();

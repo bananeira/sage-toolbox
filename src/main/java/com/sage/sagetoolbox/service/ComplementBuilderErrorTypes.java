@@ -1,4 +1,4 @@
-package com.sage.sagetoolbox.tool;
+package com.sage.sagetoolbox.service;
 
 public enum ComplementBuilderErrorTypes {
     NO_STRING_INPUT("Enter correct String"),
