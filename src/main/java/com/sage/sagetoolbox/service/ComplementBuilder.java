@@ -1,5 +1,6 @@
 package com.sage.sagetoolbox.service;
 
+import com.sage.sagetoolbox.model.Output;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -7,53 +8,62 @@ import java.util.stream.Collectors;
 
 @Service
 public class ComplementBuilder {
-    List<Character> highestValueInBasis = List.of(
+    private final Output output = new Output();
+
+    List<Character> highestValueInRadix = List.of(
             '%', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
     );
 
     char firstValueAfterOverflow = '0';
 
-    public String buildBComplement(String inputString, int basis, int size) {
+    public Output buildBComplement(String inputString, int basis, int size) {
         ComplementBuilderErrorTypes illegalParameterInputMessage = checkForIllegalParameterInputs(inputString, basis, size);
 
         if ( illegalParameterInputMessage != null ) {
-            return illegalParameterInputMessage.getMessage();
+            output.text = illegalParameterInputMessage.getMessage();
+            output.status = "error";
+
+            return output;
         }
 
         String bMinusOneComplement = stringToBMinusOneComplement(inputString, basis);
         String bComplement = addOneComplement(bMinusOneComplement, basis, size);
 
         if ( bComplement.length() < size ) {
-            return extendStringToCorrectSize(bComplement, basis, size);
+            output.text =  "SUCCESS: Your complement is " + extendStringToCorrectSize(bComplement, basis, size) + ".";
+            output.status = "success";
+        } else {
+            output.text = "SUCCESS: Your complement is " + bComplement + ".";
+            output.status = "success";
         }
 
-        return bComplement;
+        return output;
     }
 
-    private ComplementBuilderErrorTypes checkForIllegalParameterInputs(String inputString, int basis, int size) {
-        if ( inputString == null ) {
-            return ComplementBuilderErrorTypes.NO_STRING_INPUT;
+    private ComplementBuilderErrorTypes checkForIllegalParameterInputs(String inputString, int radix, int length) {
+        if ( inputString == null || length == 0 || radix == 0) {
+            return ComplementBuilderErrorTypes.NO_VALUE_INPUTS;
         }
 
-        if ( basis < 2 || basis > 16 ) {
-            return ComplementBuilderErrorTypes.BASIS_OUT_OF_LEGAL_INTERVAL;
+        if ( radix < 2 || radix > 16 ) {
+            return ComplementBuilderErrorTypes.RADIX_OUT_OF_LEGAL_INTERVAL;
         }
 
-        if ( size <= 0 || inputString.length() > size ) {
-            return ComplementBuilderErrorTypes.INVALID_SIZE;
+        if ( length <= 0 || inputString.length() > length ) {
+            return ComplementBuilderErrorTypes.INVALID_LENGTH;
         }
 
-        if ( checkForIllegalCharactersForBasis(inputString, basis, size) ) {
-            return ComplementBuilderErrorTypes.INVALID_BASIS;
+        if ( checkForIllegalCharactersForRadix(inputString, radix, length) ) {
+            return ComplementBuilderErrorTypes.INVALID_RADIX;
         }
 
         return null;
     }
 
-    private boolean checkForIllegalCharactersForBasis(String inputString, int basis, int size) {
+    private boolean checkForIllegalCharactersForRadix(String inputString, int basis, int size) {
         String pattern = basis >= 11 ?
-                "[0-9A-" + highestValueInBasis.get(basis) + "a-" + highestValueInBasis.get(basis).toString().toLowerCase() + "]{0," + size + "}"
-                : "[0-" + highestValueInBasis.get(basis) + "]{0," + size + "}";
+                "[0-9A-" + highestValueInRadix.get(basis) + "a-" + highestValueInRadix.get(basis).toString().toLowerCase() + "]{0," + size + "}"
+                : "[0-" + highestValueInRadix.get(basis) + "]{0," + size + "}";
         return !inputString.matches(pattern);
     }
 
@@ -61,7 +71,7 @@ public class ComplementBuilder {
         StringBuilder bComplementString = new StringBuilder();
 
         for (char c : inputString.toCharArray()) {
-            bComplementString.append(getInversionOfValueInBasis(c, basis));
+            bComplementString.append(getInversionOfValueInRadix(c, basis));
         }
 
         return bComplementString.toString();
@@ -71,7 +81,7 @@ public class ComplementBuilder {
         char[] inputStringCharacters = inputString.toCharArray();
 
         int index = inputString.length() - 1;
-        while (inputStringCharacters[index] == highestValueInBasis.get(basis) ) {
+        while (inputStringCharacters[index] == highestValueInRadix.get(basis) ) {
             inputStringCharacters[index] = firstValueAfterOverflow;
             index--;
 
@@ -100,20 +110,20 @@ public class ComplementBuilder {
     }
 
     private char toNextValue(char inputChar) {
-        int nextIndex = highestValueInBasis.indexOf(inputChar) + 1;
+        int nextIndex = highestValueInRadix.indexOf(inputChar) + 1;
 
-        return highestValueInBasis.get(nextIndex);
+        return highestValueInRadix.get(nextIndex);
     }
 
-    private List<Character> buildCompleteSequenceOfBasis(int basis) {
+    private List<Character> buildCompleteSequenceOfRadix(int basis) {
         String hexSequencePreset = "0123456789ABCDEF";
         String sequenceFromBasis = hexSequencePreset.substring(0, basis);
 
         return sequenceFromBasis.chars().mapToObj(e -> (char) e).collect(Collectors.toList());
     }
 
-    public char getInversionOfValueInBasis(char inputChar, int basis) {
-        List<Character> sequenceOfBasis = buildCompleteSequenceOfBasis(basis);
+    public char getInversionOfValueInRadix(char inputChar, int basis) {
+        List<Character> sequenceOfBasis = buildCompleteSequenceOfRadix(basis);
         int indexOfChar = sequenceOfBasis.indexOf(inputChar);
 
         return sequenceOfBasis.get(( basis - indexOfChar - 1 ) % basis);
@@ -124,7 +134,7 @@ public class ComplementBuilder {
 
         int currentStringSize = currentString.length();
         while ( currentStringSize < size ) {
-            currentString.insert(0, highestValueInBasis.get(basis));
+            currentString.insert(0, highestValueInRadix.get(basis));
             currentStringSize++;
         }
 
