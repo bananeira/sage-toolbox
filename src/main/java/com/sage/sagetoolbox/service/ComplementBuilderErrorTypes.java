@@ -1,11 +1,11 @@
 package com.sage.sagetoolbox.service;
 
 public enum ComplementBuilderErrorTypes {
-    NO_VALUE_INPUTS("ERROR: Enter values (radix: number, length: number, inputString: String)"),
-    RADIX_OUT_OF_LEGAL_INTERVAL("ERROR: Basis out of legal interval (2-16)"),
-    INVALID_LENGTH("ERROR: Reduce size of String to match given size or increment size to match length of String or give size higher than 0"),
-    INVALID_RADIX("ERROR: Choose string that matches basis"),
-    COMPLEMENT_TOO_LARGE("ERROR: Complement too large to be displayed by size, adjust input or size");
+    NO_VALUE_INPUTS("please enter correct values (radix: number, length: number, inputString: String)"),
+    RADIX_OUT_OF_LEGAL_INTERVAL("radix out of legal interval (2-16)"),
+    INVALID_LENGTH("increment length to match length of String or reduce length of String to match given size"),
+    INVALID_RADIX("choose String that matches radix"),
+    COMPLEMENT_TOO_LARGE("complement too large to be displayed by length, adjust input or length accordingly");
 
     private String message;
     ComplementBuilderErrorTypes(String message) {

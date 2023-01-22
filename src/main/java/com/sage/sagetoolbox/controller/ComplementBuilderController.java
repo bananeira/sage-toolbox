@@ -19,11 +19,12 @@ public class ComplementBuilderController {
     @GetMapping("/complement")
     public ResponseEntity<Output> getComplement(
             @RequestParam(value = "inputString", defaultValue = "00000000") String inputString,
-            @RequestParam(value = "basis", defaultValue = "2") int basis,
-            @RequestParam(value = "size", defaultValue = "8") int size) {
+            @RequestParam(value = "radix", defaultValue = "2") int radix,
+            @RequestParam(value = "length", defaultValue = "8") int length,
+            @RequestParam(value = "getMinusOneComplement", defaultValue = "false") boolean getMinusOneComplement) {
 
         return ResponseEntity.ok().body(
-                complementBuilderService.buildBComplement(inputString, basis, size)
+                complementBuilderService.buildBComplement(inputString, radix, length, getMinusOneComplement)
         );
     }
 }
