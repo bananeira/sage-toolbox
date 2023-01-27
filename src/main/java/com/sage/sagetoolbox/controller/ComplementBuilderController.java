@@ -10,12 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class ComplementBuilderController {
-    private final ComplementBuilder complementBuilderService;
-
-    public ComplementBuilderController(ComplementBuilder complementBuilderService) {
-        this.complementBuilderService = complementBuilderService;
-    }
-
     @GetMapping("/complement")
     public ResponseEntity<Output> getComplement(
             @RequestParam(value = "inputString", defaultValue = "00000000") String inputString,
@@ -24,7 +18,7 @@ public class ComplementBuilderController {
             @RequestParam(value = "getMinusOneComplement", defaultValue = "false") boolean getMinusOneComplement) {
 
         return ResponseEntity.ok().body(
-                complementBuilderService.buildBComplement(inputString, radix, length, getMinusOneComplement)
+                ComplementBuilder.formatOutput(inputString, radix, length, getMinusOneComplement)
         );
     }
 }

@@ -3,164 +3,171 @@ package com.sage.sagetoolbox.service;
 import com.sage.sagetoolbox.model.Output;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
 @Service
 public class ComplementBuilder {
-    private Output output = new Output();
+    private static final Output output = new Output();
 
-    List<Character> highestValueInRadix = List.of(
-            '%', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+    static List<Character> hexSequencePreset = List.of(
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
     );
 
-    char firstValueAfterOverflow = '0';
+    static List<Integer> hexSequenceInIntegers = List.of(
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+    );
 
-    public Output buildBComplement(String inputString, int radix, int length, boolean getMinusOneComplement) {
-        ComplementBuilderErrorTypes illegalParameterInputMessage = checkForIllegalParameterInputs(inputString, radix, length);
+    public static Output formatOutput(String inputString, int radix, int length, boolean getMinusOneComplement) {
+        Output filterIllegalArguments = filterIllegalArguments(inputString, radix, length);
 
-        if ( illegalParameterInputMessage != null ) {
-            output.text = "failed: " + illegalParameterInputMessage.getMessage();
-            output.status = "error";
+        if (filterIllegalArguments != null) {
+            return filterIllegalArguments;
+        }
+
+        if (getMinusOneComplement) {
+            List<Character> complement = formMinusOneComplement(inputString, radix, length);
+            output.text = "out: " + formStringRepresentationOfCharList(complement);
+            output.status = "success";
 
             return output;
         }
 
-        String bMinusOneComplement = stringToBMinusOneComplement(inputString, radix);
-        String bComplement = addOneComplement(bMinusOneComplement, radix);
-
-        output = getMinusOneComplement
-                ? formatComplementOutput(bMinusOneComplement, radix, length)
-                : formatComplementOutput(bComplement, radix, length);
-
-        return output;
-    }
-
-    private Output formatComplementOutput(String complement, int radix, int length) {
-        if (length == 0 || complement.length() >= length) {
-            output.text = "out: " + "following complement has been found: " + complement;
-        }
-        else {
-            output.text = "out: " + "following complement has been found: " + extendStringToSize(complement, radix, length);
-        }
+        List<Character> complement = formOneComplement(inputString, radix, length);
+        output.text = "out: " + formStringRepresentationOfCharList(complement);
         output.status = "success";
 
         return output;
     }
 
-    private ComplementBuilderErrorTypes checkForIllegalParameterInputs(String inputString, int radix, int length) {
-        if ( inputString == null || radix == 0) {
-            return ComplementBuilderErrorTypes.NO_VALUE_INPUTS;
+    public static String formStringRepresentationOfCharList(List<Character> characterList) {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (char character : characterList) {
+            stringBuilder.append(character);
         }
 
-        if ( radix < 2 || radix > 16 ) {
-            return ComplementBuilderErrorTypes.RADIX_OUT_OF_LEGAL_INTERVAL;
+        return String.valueOf(stringBuilder);
+    }
+
+    public static List<Character> formMinusOneComplement(String numRepresentationString, int radix, int length) {
+        List<Integer> numRepresentationList = receiveRepresentationAsString(numRepresentationString);
+        numRepresentationList = getInvertedIndexList(numRepresentationList, radix);
+        numRepresentationList = (length > numRepresentationList.size())
+                ? extendToLength(numRepresentationList, radix, length)
+                : numRepresentationList;
+
+        return buildCharListOfNumRepresentation(numRepresentationList);
+    }
+
+    public static List<Character> formOneComplement(String numRepresentationString, int radix, int length) {
+        List<Integer> numRepresentationList = receiveRepresentationAsString(numRepresentationString);
+        numRepresentationList = getInvertedIndexList(numRepresentationList, radix);
+        numRepresentationList = getPlusOneComplement(numRepresentationList, radix);
+        numRepresentationList = (length > numRepresentationList.size())
+                ? extendToLength(numRepresentationList, radix, length)
+                : numRepresentationList;
+
+        return buildCharListOfNumRepresentation(numRepresentationList);
+    }
+
+    public static List<Integer> receiveRepresentationAsString(String numberRepresentation) {
+        List<Character> numberRepresentationAsCharList = new ArrayList<>();
+
+        for (Character character : numberRepresentation.toCharArray()) {
+            numberRepresentationAsCharList.add(character);
         }
 
-        if ( length < 0 || (inputString.length() > length && length > 0)) {
-            return ComplementBuilderErrorTypes.INVALID_LENGTH;
+        List<Integer> numberRepresentationFromCharList = new ArrayList<>();
+
+        for (Character character : numberRepresentationAsCharList) {
+            numberRepresentationFromCharList.add(hexSequencePreset.indexOf(character));
         }
 
-        if ( checkForIllegalCharactersForRadix(inputString, radix) ) {
-            return ComplementBuilderErrorTypes.INVALID_RADIX;
+        return numberRepresentationFromCharList;
+    }
+
+    private static List<Integer> getPlusOneComplement(List<Integer> integerList, int radix) {
+        List<Integer> indexList = new ArrayList<>(List.copyOf(integerList));
+
+        for (int i = indexList.size() - 1; i >= 0; i--) {
+            if (Objects.equals(indexList.get(i), hexSequenceInIntegers.get(radix - 1))) {
+                indexList.set(i, 0);
+            } else {
+                indexList.set(i, indexList.get(i) + 1);
+                return indexList;
+            }
+        }
+
+        return indexList;
+    }
+
+    private static List<Integer> getInvertedIndexList(List<Integer> integerList, int radix) {
+        List<Integer> indexList = new ArrayList<>(List.copyOf(integerList));
+
+        indexList.replaceAll(index -> getInvertedIndexOverRadix(index, radix));
+
+        return indexList;
+    }
+
+    private static Integer getInvertedIndexOverRadix(Integer index, int radix) {
+        return hexSequenceInIntegers.get((radix - index - 1) % (radix));
+    }
+
+    private static List<Character> buildCharListOfNumRepresentation(List<Integer> integerList) {
+        List<Character> charListOfNumRepresentation = new ArrayList<>();
+
+        for (Integer integer : integerList) {
+            charListOfNumRepresentation.add(hexSequencePreset.get(integer));
+        }
+
+        return charListOfNumRepresentation;
+    }
+
+    private static List<Integer> extendToLength(List<Integer> input, int radix, int length) {
+        List<Integer> extendedIndexList = new ArrayList<>(input);
+
+        while (extendedIndexList.size() < length) {
+            extendedIndexList.add(0, hexSequenceInIntegers.get(radix - 1));
+        }
+
+        return extendedIndexList;
+    }
+
+    public static Output filterIllegalArguments(String input, int radix, int length) {
+        if (input == null || radix == 0) {
+            output.text = "error: " + ComplementBuilderErrorTypes.NO_VALUE_INPUTS.getMessage();
+            output.status = "error";
+
+            return output;
+        }
+
+        if (radix < 2 || radix > 16) {
+            output.text = "error: " + ComplementBuilderErrorTypes.RADIX_OUT_OF_LEGAL_INTERVAL.getMessage();
+            output.status = "error";
+
+            return output;
+        }
+
+        if (length < input.length() && length != 0) {
+            output.text = "error: " + ComplementBuilderErrorTypes.INVALID_LENGTH.getMessage();
+            output.status = "error";
+
+            return output;
+        }
+
+        String pattern = radix >= 11
+                ? "[0-9A-" + hexSequencePreset.get(radix - 1).toString().toUpperCase() + "a-" + hexSequencePreset.get(radix - 1).toString().toLowerCase() + "]*"
+                : "[0-" + hexSequencePreset.get(radix - 1).toString() + "]*";
+
+        if (!input.matches(pattern)) {
+            output.text = "error: " + ComplementBuilderErrorTypes.INVALID_RADIX.getMessage();
+            output.status = "error";
+
+            return output;
         }
 
         return null;
-    }
-
-    private boolean checkForIllegalCharactersForRadix(String inputString, int radix) {
-        String pattern = radix >= 11 ?
-                "[0-9A-" + highestValueInRadix.get(radix) + "a-" + highestValueInRadix.get(radix).toString().toLowerCase() + "]*"
-                : "[0-" + highestValueInRadix.get(radix) + "]*";
-        return !inputString.matches(pattern);
-    }
-
-    public String stringToBMinusOneComplement(String inputString, int radix) {
-        StringBuilder bComplementString = new StringBuilder();
-
-        for (char c : inputString.toCharArray()) {
-            bComplementString.append(getInversionOfValueInRadix(c, radix));
-        }
-
-        return bComplementString.toString();
-    }
-
-    private String addOneComplement(String inputString, int radix) {
-        char[] inputStringCharacters = inputString.toCharArray();
-
-        int index = inputString.length() - 1;
-        while (inputStringCharacters[index] == highestValueInRadix.get(radix) && index > 0) {
-            inputStringCharacters[index] = firstValueAfterOverflow;
-            index--;
-
-            /*
-            if (index < 0) {
-                String largerComplementThanInputString = handleLargerComplementThanInputString(String.valueOf(inputStringCharacters), length);
-
-
-                return largerComplementThanInputString != null
-                        ? largerComplementThanInputString
-                        : ComplementBuilderErrorTypes.COMPLEMENT_TOO_LARGE.getMessage();
-            }
-             */
-        }
-        inputStringCharacters[index] = toNextValue(inputStringCharacters[index]);
-
-        return String.valueOf(inputStringCharacters);
-    }
-
-    /* Das ist aus rein praktischer Hinsicht falsch.
-    Das Komplement erlebt genau dann einen Overflow, der im Weiteren nicht beachtet werden soll.
-
-
-    private String handleLargerComplementThanInputString(String inputString, int radix) {
-        StringBuilder str = new StringBuilder(inputString);
-        str.insert(0, toNextValue(firstValueAfterOverflow));
-
-        if (str.length() > radix) {
-            return null;
-        }
-
-        return String.valueOf(str);
-    }
-     */
-
-    private char toNextValue(char inputChar) {
-        int observeIndexInResidueClass = highestValueInRadix.indexOf(inputChar) + 1 == highestValueInRadix. ?
-
-
-
-
-                (highestValueInRadix.indexOf(inputChar) == highestValueInRadix.size() - 1)
-                ? highestValueInRadix.get(1)
-                : highestValueInRadix.indexOf(inputChar) + 1;
-
-        return highestValueInRadix.get(observeIndexInResidueClass);
-    }
-
-    private List<Character> buildCompleteSequenceOfRadix(int radix) {
-        String hexSequencePreset = "0123456789ABCDEF";
-        String sequenceFromBasis = hexSequencePreset.substring(0, radix);
-
-        return sequenceFromBasis.chars().mapToObj(e -> (char) e).collect(Collectors.toList());
-    }
-
-    private char getInversionOfValueInRadix(char inputChar, int radix) {
-        List<Character> sequenceOfBasis = buildCompleteSequenceOfRadix(radix);
-        int indexOfChar = sequenceOfBasis.indexOf(inputChar);
-
-        return sequenceOfBasis.get(( radix - indexOfChar - 1 ) % radix);
-    }
-
-    private String extendStringToSize(String inputString, int radix, int length) {
-        StringBuilder currentString = new StringBuilder(inputString);
-
-        int currentStringSize = currentString.length();
-        while ( currentStringSize < length ) {
-            currentString.insert(0, highestValueInRadix.get(radix));
-            currentStringSize++;
-        }
-
-        return String.valueOf(currentString);
     }
 }
