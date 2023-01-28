@@ -14,7 +14,7 @@ public class ComplementBuilderController {
     public ResponseEntity<Output> getComplement(
             @RequestParam(value = "inputString", defaultValue = "00000000") String inputString,
             @RequestParam(value = "radix", defaultValue = "2") int radix,
-            @RequestParam(value = "length", defaultValue = "8") int length,
+            @RequestParam(value = "length", defaultValue = "0") int length,
             @RequestParam(value = "getMinusOneComplement", defaultValue = "false") boolean getMinusOneComplement) {
 
         return ResponseEntity.ok().body(
