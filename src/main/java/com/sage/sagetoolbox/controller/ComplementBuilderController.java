@@ -15,10 +15,11 @@ public class ComplementBuilderController {
             @RequestParam(value = "inputString", defaultValue = "00000000") String inputString,
             @RequestParam(value = "radix", defaultValue = "2") int radix,
             @RequestParam(value = "length", defaultValue = "0") int length,
-            @RequestParam(value = "getMinusOneComplement", defaultValue = "false") boolean getMinusOneComplement) {
+            @RequestParam(value = "getMinusOneComplement", defaultValue = "false") boolean getMinusOneComplement,
+            @RequestParam(value = "interpretAsBinary", defaultValue = "true") boolean interpretAsBinary) {
 
         return ResponseEntity.ok().body(
-                ComplementBuilder.formatOutput(inputString, radix, length, getMinusOneComplement)
+                ComplementBuilder.formatOutput(inputString, radix, length, getMinusOneComplement, interpretAsBinary)
         );
     }
 }

@@ -19,7 +19,11 @@ public class ComplementBuilder {
             0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
     );
 
-    public static Output formatOutput(String inputString, int radix, int length, boolean getMinusOneComplement) {
+    public static Output formatOutput(String inputString,
+                                      int radix,
+                                      int length,
+                                      boolean getMinusOneComplement,
+                                      boolean interpretAsBinary) {
         Output filterIllegalArguments = filterIllegalArguments(inputString, radix, length);
 
         if (filterIllegalArguments != null) {
@@ -27,21 +31,21 @@ public class ComplementBuilder {
         }
 
         if (getMinusOneComplement) {
-            List<Character> complement = formMinusOneComplement(inputString, radix, length);
-            output.text = "out: " + formStringRepresentationOfCharList(complement);
+            List<Character> complement = formMinusOneComplement(inputString, radix, length, interpretAsBinary);
+            output.text = "out: " + convertCharListToString(complement);
             output.status = "success";
 
             return output;
         }
 
-        List<Character> complement = formOneComplement(inputString, radix, length);
-        output.text = "out: " + formStringRepresentationOfCharList(complement);
+        List<Character> complement = formOneComplement(inputString, radix, length, interpretAsBinary);
+        output.text = "out: " + convertCharListToString(complement);
         output.status = "success";
 
         return output;
     }
 
-    public static String formStringRepresentationOfCharList(List<Character> characterList) {
+    public static String convertCharListToString(List<Character> characterList) {
         StringBuilder stringBuilder = new StringBuilder();
 
         for (char character : characterList) {
@@ -51,9 +55,21 @@ public class ComplementBuilder {
         return String.valueOf(stringBuilder);
     }
 
-    public static List<Character> formMinusOneComplement(String numRepresentationString, int radix, int length) {
+    public static List<Character> formMinusOneComplement(String numRepresentationString,
+                                                         int radix,
+                                                         int length,
+                                                         boolean interpretAsBinary) {
         List<Integer> numRepresentationList = receiveRepresentationAsString(numRepresentationString);
-        numRepresentationList = getInvertedIndexList(numRepresentationList, radix);
+        numRepresentationList = interpretAsBinary
+                ? getInvertedIndexList(
+                NumberRadixConverter
+                        .convertToRadix(
+                                numRepresentationList, radix, 2
+                        ), 2)
+                : getInvertedIndexList(numRepresentationList, radix);
+        numRepresentationList = interpretAsBinary
+                ? NumberRadixConverter.convertToRadix(numRepresentationList, 2, radix)
+                : numRepresentationList;
         numRepresentationList = (length > numRepresentationList.size())
                 ? extendToLength(numRepresentationList, radix, length)
                 : numRepresentationList;
@@ -61,10 +77,24 @@ public class ComplementBuilder {
         return buildCharListOfNumRepresentation(numRepresentationList);
     }
 
-    public static List<Character> formOneComplement(String numRepresentationString, int radix, int length) {
+    public static List<Character> formOneComplement(String numRepresentationString,
+                                                    int radix,
+                                                    int length,
+                                                    boolean interpretAsBinary) {
         List<Integer> numRepresentationList = receiveRepresentationAsString(numRepresentationString);
-        numRepresentationList = getInvertedIndexList(numRepresentationList, radix);
-        numRepresentationList = getPlusOneComplement(numRepresentationList, radix);
+        numRepresentationList = interpretAsBinary
+                ? getInvertedIndexList(
+                NumberRadixConverter
+                        .convertToRadix(
+                                numRepresentationList, radix, 2
+                        ), 2)
+                : getInvertedIndexList(numRepresentationList, radix);
+        numRepresentationList = interpretAsBinary
+                ? getPlusOneComplement(numRepresentationList, 2)
+                : getPlusOneComplement(numRepresentationList, radix);
+        numRepresentationList = interpretAsBinary
+                ? NumberRadixConverter.convertToRadix(numRepresentationList, 2, radix)
+                : numRepresentationList;
         numRepresentationList = (length > numRepresentationList.size())
                 ? extendToLength(numRepresentationList, radix, length)
                 : numRepresentationList;
@@ -145,6 +175,13 @@ public class ComplementBuilder {
 
         if (radix < 2 || radix > 16) {
             output.text = "error: " + ComplementBuilderErrorTypes.RADIX_OUT_OF_LEGAL_INTERVAL.getMessage();
+            output.status = "error";
+
+            return output;
+        }
+
+        if (length > 512) {
+            output.text = "error: " + ComplementBuilderErrorTypes.LENGTH_TOO_LARGE.getMessage();
             output.status = "error";
 
             return output;
