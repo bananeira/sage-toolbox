@@ -61,17 +61,13 @@ public class ComplementBuilder {
                                                          boolean interpretAsBinary) {
         List<Integer> numRepresentationList = receiveRepresentationAsString(numRepresentationString);
         numRepresentationList = interpretAsBinary
-                ? getInvertedIndexList(
-                NumberRadixConverter
-                        .convertToRadix(
-                                numRepresentationList, radix, 2
-                        ), 2)
+                ? getInvertedIndexList(NumberRadixConverter.convertToRadix(numRepresentationList, radix, 2), 2)
                 : getInvertedIndexList(numRepresentationList, radix);
+        numRepresentationList = (length > numRepresentationList.size())
+                ? extendToLength(numRepresentationList, 2, length)
+                : numRepresentationList;
         numRepresentationList = interpretAsBinary
                 ? NumberRadixConverter.convertToRadix(numRepresentationList, 2, radix)
-                : numRepresentationList;
-        numRepresentationList = (length > numRepresentationList.size())
-                ? extendToLength(numRepresentationList, radix, length)
                 : numRepresentationList;
 
         return buildCharListOfNumRepresentation(numRepresentationList);
@@ -83,20 +79,16 @@ public class ComplementBuilder {
                                                     boolean interpretAsBinary) {
         List<Integer> numRepresentationList = receiveRepresentationAsString(numRepresentationString);
         numRepresentationList = interpretAsBinary
-                ? getInvertedIndexList(
-                NumberRadixConverter
-                        .convertToRadix(
-                                numRepresentationList, radix, 2
-                        ), 2)
+                ? getInvertedIndexList(NumberRadixConverter.convertToRadix(numRepresentationList, radix, 2), 2)
                 : getInvertedIndexList(numRepresentationList, radix);
         numRepresentationList = interpretAsBinary
-                ? getPlusOneComplement(numRepresentationList, 2)
+                ? getPlusOneComplement(NumberRadixConverter.convertToRadix(numRepresentationList, radix, 2), 2)
                 : getPlusOneComplement(numRepresentationList, radix);
+        numRepresentationList = (length > numRepresentationList.size())
+                ? extendToLength(numRepresentationList, 2, length)
+                : numRepresentationList;
         numRepresentationList = interpretAsBinary
                 ? NumberRadixConverter.convertToRadix(numRepresentationList, 2, radix)
-                : numRepresentationList;
-        numRepresentationList = (length > numRepresentationList.size())
-                ? extendToLength(numRepresentationList, radix, length)
                 : numRepresentationList;
 
         return buildCharListOfNumRepresentation(numRepresentationList);
