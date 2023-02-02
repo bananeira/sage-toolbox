@@ -63,9 +63,7 @@ public class ComplementBuilder {
         numRepresentationList = interpretAsBinary
                 ? getInvertedIndexList(NumberRadixConverter.convertToRadix(numRepresentationList, radix, 2), 2)
                 : getInvertedIndexList(numRepresentationList, radix);
-        numRepresentationList = (length > numRepresentationList.size())
-                ? extendToLength(numRepresentationList, 2, length)
-                : numRepresentationList;
+        numRepresentationList = applyLengthFormat(radix, length, interpretAsBinary, numRepresentationList);
         numRepresentationList = interpretAsBinary
                 ? NumberRadixConverter.convertToRadix(numRepresentationList, 2, radix)
                 : numRepresentationList;
@@ -84,14 +82,21 @@ public class ComplementBuilder {
         numRepresentationList = interpretAsBinary
                 ? getPlusOneComplement(NumberRadixConverter.convertToRadix(numRepresentationList, radix, 2), 2)
                 : getPlusOneComplement(numRepresentationList, radix);
-        numRepresentationList = (length > numRepresentationList.size())
-                ? extendToLength(numRepresentationList, 2, length)
-                : numRepresentationList;
+        numRepresentationList = applyLengthFormat(radix, length, interpretAsBinary, numRepresentationList);
         numRepresentationList = interpretAsBinary
                 ? NumberRadixConverter.convertToRadix(numRepresentationList, 2, radix)
                 : numRepresentationList;
 
         return buildCharListOfNumRepresentation(numRepresentationList);
+    }
+
+    private static List<Integer> applyLengthFormat(int radix, int length, boolean interpretAsBinary, List<Integer> numRepresentationList) {
+        numRepresentationList = (length > numRepresentationList.size() && interpretAsBinary)
+                ? extendToLength(numRepresentationList, 2, length)
+                : (length > numRepresentationList.size())
+                ? extendToLength(numRepresentationList, radix, length)
+                : numRepresentationList;
+        return numRepresentationList;
     }
 
     public static List<Integer> receiveRepresentationAsString(String numberRepresentation) {
@@ -157,7 +162,7 @@ public class ComplementBuilder {
         return extendedIndexList;
     }
 
-    public static Output filterIllegalArguments(String input, int radix, int length) {
+    private static Output filterIllegalArguments(String input, int radix, int length) {
         if (input == null || radix == 0) {
             output.text = "error: " + ComplementBuilderErrorTypes.NO_VALUE_INPUTS.getMessage();
             output.status = "error";
