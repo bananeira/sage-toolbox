@@ -100,6 +100,7 @@ public class ComplementBuilder {
     }
 
     public static List<Integer> receiveRepresentationAsString(String numberRepresentation) {
+        numberRepresentation = numberRepresentation.toUpperCase();
         List<Character> numberRepresentationAsCharList = new ArrayList<>();
 
         for (Character character : numberRepresentation.toCharArray()) {
