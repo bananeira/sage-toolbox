@@ -60,11 +60,11 @@ public class ComplementBuilder {
                                                          int length,
                                                          boolean interpretAsBinary) {
         List<Integer> numRepresentationList = receiveRepresentationAsString(numRepresentationString);
-        numRepresentationList = interpretAsBinary
+        numRepresentationList = interpretAsBinary && radix != 2
                 ? getInvertedIndexList(NumberRadixConverter.convertToRadix(numRepresentationList, radix, 2), 2)
                 : getInvertedIndexList(numRepresentationList, radix);
         numRepresentationList = applyLengthFormat(radix, length, interpretAsBinary, numRepresentationList);
-        numRepresentationList = interpretAsBinary
+        numRepresentationList = interpretAsBinary && radix != 2
                 ? NumberRadixConverter.convertToRadix(numRepresentationList, 2, radix)
                 : numRepresentationList;
 
@@ -76,14 +76,14 @@ public class ComplementBuilder {
                                                     int length,
                                                     boolean interpretAsBinary) {
         List<Integer> numRepresentationList = receiveRepresentationAsString(numRepresentationString);
-        numRepresentationList = interpretAsBinary
+        numRepresentationList = interpretAsBinary && radix != 2
                 ? getInvertedIndexList(NumberRadixConverter.convertToRadix(numRepresentationList, radix, 2), 2)
                 : getInvertedIndexList(numRepresentationList, radix);
-        numRepresentationList = interpretAsBinary
-                ? getPlusOneComplement(NumberRadixConverter.convertToRadix(numRepresentationList, radix, 2), 2)
+        numRepresentationList = interpretAsBinary && radix != 2
+                ? getPlusOneComplement(numRepresentationList, 2)
                 : getPlusOneComplement(numRepresentationList, radix);
         numRepresentationList = applyLengthFormat(radix, length, interpretAsBinary, numRepresentationList);
-        numRepresentationList = interpretAsBinary
+        numRepresentationList = interpretAsBinary && radix != 2
                 ? NumberRadixConverter.convertToRadix(numRepresentationList, 2, radix)
                 : numRepresentationList;
 
