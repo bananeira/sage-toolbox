@@ -10,8 +10,5 @@ import java.util.List;
 public class SageToolboxApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SageToolboxApplication.class, args);
-		System.out.println(NumberRadixConverter.convertToRadix(List.of(
-				1,1,0,1,1,1,1,0,1,1,1,0,1,1,0,1,0,1,0,1
-		), 3, 7));
 	}
 }
