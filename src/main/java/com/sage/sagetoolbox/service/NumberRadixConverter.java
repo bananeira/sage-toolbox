@@ -6,16 +6,23 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.Math.*;
+
 @Service
 public class NumberRadixConverter {
     public static List<Integer> convertToRadix(List<Integer> input, int fromBasis, int toBasis) {
-        int lengthOfConvertedNumber = (int) (Math.floor(Math.log(fromBasis) / Math.log(toBasis)) * input.size());
+        int lengthOfConvertedNumber = (int) (ceil(log(fromBasis) / log(toBasis) * input.size()));
+        System.out.println(lengthOfConvertedNumber);
 
         List<Integer> convertedList = new ArrayList<>();
         BigInteger decimal = BigInteger.valueOf(0);
 
         for (int i = 0; i < input.size(); i++) {
-            decimal = decimal.add(BigInteger.valueOf((long) (input.get(input.size() - 1 - i) * Math.pow(fromBasis, i))));
+            decimal = decimal.add(
+                    BigInteger.valueOf(
+                            (int) (input.get(input.size() - 1 - i) * pow(fromBasis, i))
+                    )
+            );
         }
 
         while (BigInteger.valueOf(0).compareTo(decimal) < 0) {
