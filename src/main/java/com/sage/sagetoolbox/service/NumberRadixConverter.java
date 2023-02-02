@@ -9,10 +9,6 @@ import java.util.List;
 @Service
 public class NumberRadixConverter {
     public static List<Integer> convertToRadix(List<Integer> input, int fromBasis, int toBasis) {
-        if (fromBasis == toBasis) {
-            return input;
-        }
-
         int lengthOfConvertedNumber = (int) (Math.floor(Math.log(fromBasis - 1) / Math.log(toBasis)) * input.size());
 
         List<Integer> convertedList = new ArrayList<>();
