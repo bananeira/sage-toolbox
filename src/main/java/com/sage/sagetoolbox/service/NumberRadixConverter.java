@@ -11,7 +11,7 @@ import static java.lang.Math.*;
 @Service
 public class NumberRadixConverter {
     public static List<Integer> convertToRadix(List<Integer> input, int fromBasis, int toBasis, int sign) {
-        int lengthOfConvertedNumber = (int) (ceil(log(fromBasis) / log(toBasis)));
+        int lengthOfConvertedNumber = (int) (ceil(log(fromBasis) / log(toBasis)) * input.size());
 
         List<Integer> convertedList = new ArrayList<>();
         BigInteger decimal = BigInteger.valueOf(0);
