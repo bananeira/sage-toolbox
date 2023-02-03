@@ -61,11 +61,19 @@ public class ComplementBuilder {
                                                          boolean interpretAsBinary) {
         List<Integer> numRepresentationList = receiveRepresentationAsString(numRepresentationString);
         numRepresentationList = interpretAsBinary && radix != 2
-                ? getInvertedIndexList(NumberRadixConverter.convertToRadix(numRepresentationList, radix, 2), 2)
+                ? getInvertedIndexList(NumberRadixConverter.convertToRadix(
+                        numRepresentationList,
+                        radix,
+                        2,
+                        0),
+                2)
                 : getInvertedIndexList(numRepresentationList, radix);
         numRepresentationList = applyLengthFormat(radix, length, interpretAsBinary, numRepresentationList);
         numRepresentationList = interpretAsBinary && radix != 2
-                ? NumberRadixConverter.convertToRadix(numRepresentationList, 2, radix)
+                ? NumberRadixConverter.convertToRadix(
+                numRepresentationList,
+                2, radix,
+                1)
                 : numRepresentationList;
 
         return buildCharListOfNumRepresentation(numRepresentationList);
@@ -77,20 +85,33 @@ public class ComplementBuilder {
                                                     boolean interpretAsBinary) {
         List<Integer> numRepresentationList = receiveRepresentationAsString(numRepresentationString);
         numRepresentationList = interpretAsBinary && radix != 2
-                ? getInvertedIndexList(NumberRadixConverter.convertToRadix(numRepresentationList, radix, 2), 2)
+                ? getInvertedIndexList(NumberRadixConverter.convertToRadix(
+                        numRepresentationList,
+                        radix,
+                        2,
+                        0),
+                2)
                 : getInvertedIndexList(numRepresentationList, radix);
         numRepresentationList = interpretAsBinary && radix != 2
                 ? getPlusOneComplement(numRepresentationList, 2)
                 : getPlusOneComplement(numRepresentationList, radix);
         numRepresentationList = applyLengthFormat(radix, length, interpretAsBinary, numRepresentationList);
         numRepresentationList = interpretAsBinary && radix != 2
-                ? NumberRadixConverter.convertToRadix(numRepresentationList, 2, radix)
+                ? NumberRadixConverter.convertToRadix(
+                numRepresentationList,
+                2,
+                radix,
+                1)
                 : numRepresentationList;
 
         return buildCharListOfNumRepresentation(numRepresentationList);
     }
 
-    private static List<Integer> applyLengthFormat(int radix, int length, boolean interpretAsBinary, List<Integer> numRepresentationList) {
+    private static List<Integer> applyLengthFormat(
+            int radix,
+            int length,
+            boolean interpretAsBinary,
+            List<Integer> numRepresentationList) {
         numRepresentationList = (length > numRepresentationList.size() && interpretAsBinary)
                 ? extendToLength(numRepresentationList, 2, length)
                 : (length > numRepresentationList.size())
@@ -143,7 +164,7 @@ public class ComplementBuilder {
         return hexSequenceInIntegers.get((radix - index - 1) % (radix));
     }
 
-    private static List<Character> buildCharListOfNumRepresentation(List<Integer> integerList) {
+    public static List<Character> buildCharListOfNumRepresentation(List<Integer> integerList) {
         List<Character> charListOfNumRepresentation = new ArrayList<>();
 
         for (Integer integer : integerList) {
@@ -193,7 +214,8 @@ public class ComplementBuilder {
         }
 
         String pattern = radix >= 11
-                ? "[0-9A-" + hexSequencePreset.get(radix - 1).toString().toUpperCase() + "a-" + hexSequencePreset.get(radix - 1).toString().toLowerCase() + "]*"
+                ? "[0-9A-" + hexSequencePreset.get(radix - 1).toString().toUpperCase()
+                + "a-" + hexSequencePreset.get(radix - 1).toString().toLowerCase() + "]*"
                 : "[0-" + hexSequencePreset.get(radix - 1).toString() + "]*";
 
         if (!input.matches(pattern)) {
