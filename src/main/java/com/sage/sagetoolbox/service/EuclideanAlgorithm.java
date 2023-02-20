@@ -6,6 +6,13 @@ import java.util.List;
 import static java.lang.Math.*;
 
 public class EuclideanAlgorithm {
+    public static int fastGCD(int number1, int number2) {
+        if (number2 == 0) {
+            return number1;
+        }
+
+        return fastGCD(number2, number1 % number2);
+    }
 
     public static List<List<Integer>> findGCD(int numberA, int numberB) {
         final List<List<Integer>> divisorFormatList = new ArrayList<>();

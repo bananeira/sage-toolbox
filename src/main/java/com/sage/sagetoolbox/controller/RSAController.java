@@ -2,11 +2,14 @@ package com.sage.sagetoolbox.controller;
 
 import com.sage.sagetoolbox.model.RSAWithKeyOutput;
 import com.sage.sagetoolbox.model.RSAWithPrimesOutput;
+import com.sage.sagetoolbox.service.GenerateRSAValues;
 import com.sage.sagetoolbox.service.RSAProcedure;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 public class RSAController {
@@ -26,6 +29,25 @@ public class RSAController {
             @RequestParam(value = "N", defaultValue = "0") int N) {
         return ResponseEntity.ok().body(
                 RSAProcedure.rsaWithKey(encryptKey, N)
+        );
+    }
+
+    @GetMapping("/generateRSAKeySet")
+    public ResponseEntity<List<Integer>> getRSAKeySet(
+            @RequestParam(value = "max", defaultValue = "800") int max
+    ) {
+        return ResponseEntity.ok().body(
+                GenerateRSAValues.generateKeySet(max)
+        );
+    }
+
+    @GetMapping("/generateRSAPrimesSet")
+    public ResponseEntity<List<Integer>> getRSAPrimesSet(
+            @RequestParam(value = "max", defaultValue = "29") int max,
+            @RequestParam(value = "min", defaultValue = "5") int min
+    ) {
+        return ResponseEntity.ok().body(
+                GenerateRSAValues.generatePrimesSet(min, max)
         );
     }
 }
