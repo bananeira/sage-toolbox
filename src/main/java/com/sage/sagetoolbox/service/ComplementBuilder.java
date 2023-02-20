@@ -72,7 +72,8 @@ public class ComplementBuilder {
         numRepresentationList = interpretAsBinary && radix != 2
                 ? NumberRadixConverter.convertToRadix(
                 numRepresentationList,
-                2, radix,
+                2,
+                radix,
                 1)
                 : numRepresentationList;
 

@@ -17,7 +17,6 @@ public class ComplementBuilderController {
             @RequestParam(value = "length", defaultValue = "0") int length,
             @RequestParam(value = "getMinusOneComplement", defaultValue = "false") boolean getMinusOneComplement,
             @RequestParam(value = "interpretAsBinary", defaultValue = "true") boolean interpretAsBinary) {
-
         return ResponseEntity.ok().body(
                 ComplementBuilder.formatOutput(inputString, radix, length, getMinusOneComplement, interpretAsBinary)
         );
