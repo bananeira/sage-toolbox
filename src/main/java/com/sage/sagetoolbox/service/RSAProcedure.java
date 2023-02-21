@@ -129,7 +129,8 @@ public class RSAProcedure {
                 16, // min is too big or too small
                 17, // max is too big or too small
                 18, // min is bigger than max
-                19 // no primes in given interval
+                19, // no primes in given interval
+                20 // e is neutral
         );
 
         return exceptions.get(exception);

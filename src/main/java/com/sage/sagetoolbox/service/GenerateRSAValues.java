@@ -10,9 +10,16 @@ import static com.sage.sagetoolbox.service.EuclideanAlgorithm.fastGCD;
 import static java.lang.Math.abs;
 
 public class GenerateRSAValues {
-    public static List<Integer> generateKeySet(int max) {
+    public static List<Integer> generateKeySet(int min, int max) {
         List<Integer> keySet = new ArrayList<>();
-        keySet.add(generateRandomN(max));
+        int p = generateRandomPrime(min, max);
+        int q = generateRandomPrime(min, max);
+
+        if (p == -1 || q == -1) {
+            return keySet;
+        }
+
+        keySet.add(p * q);
         keySet.add(generateRandomE(keySet.get(0)));
 
         return keySet;

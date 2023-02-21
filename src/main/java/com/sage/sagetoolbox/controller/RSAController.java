@@ -34,10 +34,11 @@ public class RSAController {
 
     @GetMapping("/generateRSAKeySet")
     public ResponseEntity<List<Integer>> getRSAKeySet(
-            @RequestParam(value = "max", defaultValue = "800") int max
+            @RequestParam(value = "max", defaultValue = "29") int max,
+            @RequestParam(value = "min", defaultValue = "5") int min
     ) {
         return ResponseEntity.ok().body(
-                GenerateRSAValues.generateKeySet(max)
+                GenerateRSAValues.generateKeySet(min, max)
         );
     }
 
