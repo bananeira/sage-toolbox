@@ -29,11 +29,6 @@ public class RSAProcedure {
             return rsaOutput;
         }
 
-        if (encryptKey <= 0) {
-            rsaOutput.exception = exceptionList(8);
-            return rsaOutput;
-        }
-
         if (encryptKey >= EulerTotientFunction.findEulersTotient(List.of(primeP, primeQ))) {
             rsaOutput.exception = exceptionList(1);
             rsaOutput.eulerTotient = EulerTotientFunction.findEulersTotient(List.of(primeP, primeQ));
@@ -41,6 +36,11 @@ public class RSAProcedure {
         }
 
         rsaOutput.eulerTotient = EulerTotientFunction.findEulersTotient(List.of(primeP, primeQ));
+
+        if (encryptKey <= 0) {
+            rsaOutput.exception = exceptionList(8);
+            return rsaOutput;
+        }
 
         rsaOutput.totientComponents = ExtendedEulerTotientFunction.findEulersTotient(List.of(primeP, primeQ));
         rsaOutput.divisorFormatList = EuclideanAlgorithm.findGCD(encryptKey, rsaOutput.eulerTotient);
