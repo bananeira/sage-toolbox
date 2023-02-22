@@ -34,8 +34,9 @@ public class RSAProcedure {
             return rsaOutput;
         }
 
-        if (encryptKey > EulerTotientFunction.findEulersTotient(List.of(primeP, primeQ))) {
+        if (encryptKey >= EulerTotientFunction.findEulersTotient(List.of(primeP, primeQ))) {
             rsaOutput.exception = exceptionList(1);
+            rsaOutput.eulerTotient = EulerTotientFunction.findEulersTotient(List.of(primeP, primeQ));
             return rsaOutput;
         }
 
@@ -71,22 +72,23 @@ public class RSAProcedure {
             return rsaOutput;
         }
 
+        rsaOutput.primeFactors = PrimeFactorization.getPrimeFactorsNumber(N);
+
+        if (encryptKey >= EulerTotientFunction.findEulersTotient(rsaOutput.primeFactors)) {
+            rsaOutput.exception = exceptionList(1);
+            rsaOutput.eulerTotient = EulerTotientFunction.findEulersTotient(rsaOutput.primeFactors);
+            return rsaOutput;
+        }
+
         if (encryptKey >= N) {
             rsaOutput.exception = exceptionList(6);
             return rsaOutput;
         }
 
-        rsaOutput.primeFactors = PrimeFactorization.getPrimeFactorsNumber(N);
-
         rsaOutput.eulerTotient = EulerTotientFunction.findEulersTotient(rsaOutput.primeFactors);
 
         if (rsaOutput.primeFactors.size() != 2) {
             rsaOutput.exception = exceptionList(2);
-            return rsaOutput;
-        }
-
-        if (encryptKey >= rsaOutput.eulerTotient) {
-            rsaOutput.exception = exceptionList(1);
             return rsaOutput;
         }
 
@@ -130,7 +132,8 @@ public class RSAProcedure {
                 17, // max is too big or too small
                 18, // min is bigger than max
                 19, // no primes in given interval
-                20 // e is neutral
+                20, // e is neutral
+                21 // something server-sided went wrong
         );
 
         return exceptions.get(exception);
