@@ -67,7 +67,7 @@ public class RSAProcedure {
             return rsaOutput;
         }
 
-        if (N <= 0) {
+        if (N <= 3) {
             rsaOutput.exception = exceptionList(11);
             return rsaOutput;
         }
