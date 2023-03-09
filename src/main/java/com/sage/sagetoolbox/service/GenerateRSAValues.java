@@ -61,7 +61,7 @@ public class GenerateRSAValues {
 
     public static List<Integer> generateRandomEList(int N) {
         int eulerTotient = EulerTotientFunction.findEulersTotient(PrimeFactorization.getPrimeFactorsNumber(N));
-        int min = 1;
+        int min = 2;
 
         return IntStream.rangeClosed(min, eulerTotient)
                 .filter(x -> (fastGCD(x, eulerTotient) == 1)).boxed()

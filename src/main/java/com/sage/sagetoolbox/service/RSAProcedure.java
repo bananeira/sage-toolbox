@@ -133,7 +133,13 @@ public class RSAProcedure {
                 18, // min is bigger than max
                 19, // no primes in given interval
                 20, // e is neutral
-                21 // something server-sided went wrong
+                21, // p is not a number
+                22, // q is not a number
+                23, // e is not a number
+                24, // N is not a number
+                25, // min is not a number
+                26, // max is not a number
+                27 // pq bigger than int limit
         );
 
         return exceptions.get(exception);
