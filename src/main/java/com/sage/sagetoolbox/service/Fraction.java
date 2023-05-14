@@ -1,43 +1,64 @@
 package com.sage.sagetoolbox.service;
 
-import static java.lang.Math.abs;
+import java.math.BigInteger;
+import java.util.Objects;
 
 public class Fraction {
-    private int numerator;
+    private BigInteger numerator;
 
-    private int denominator;
+    private BigInteger denominator;
 
-    public Fraction(int numerator, int denominator) {
+    public Fraction(BigInteger numerator, BigInteger denominator) {
         this.numerator = numerator;
         this.denominator = denominator;
+
+        if (denominator.compareTo(BigInteger.valueOf(0)) < 0) {
+            this.denominator = this.denominator.multiply(BigInteger.valueOf(-1));
+            this.numerator = this.numerator.multiply(BigInteger.valueOf(-1));
+        }
     }
 
     public Fraction() {
-        this.numerator = 0;
-        this.denominator = 1;
+        this.numerator = BigInteger.valueOf(0);
+        this.denominator = BigInteger.valueOf(1);
     }
 
 
-    public int getNum() {
+    public BigInteger getNum() {
         return numerator;
     }
 
-    public void setNum(int numerator) {
+    public void setNum(BigInteger numerator) {
         this.numerator = numerator;
     }
 
-    public int getDen() {
+    public BigInteger getDen() {
         return denominator;
     }
 
-    public void setDen(int denominator) {
-        if (denominator != 0) {
-            if (denominator < 0) {
-                this.denominator = abs(denominator);
-                this.numerator = this.numerator * -1;
+    public void setDen(BigInteger denominator) {
+        if (!Objects.equals(denominator, BigInteger.valueOf(0))) {
+            if (denominator.compareTo(BigInteger.valueOf(0)) < 0) {
+                this.denominator = this.denominator.multiply(BigInteger.valueOf(-1));
+                this.numerator = this.numerator.multiply(BigInteger.valueOf(-1));
             } else {
                 this.denominator = denominator;
             }
         }
+    }
+
+    public void shortenFractionsMax() {
+        Fraction toShortened = new Fraction(this.numerator, this.denominator);
+        BigInteger divisor = EuclideanAlgorithm.fastGCD(toShortened.getNum(), toShortened.getDen());
+
+        if (Objects.equals(divisor, BigInteger.valueOf(1))) return;
+
+        this.numerator = this.numerator.divide(divisor);
+        this.denominator = this.denominator.divide(divisor);
+    }
+
+    @Override
+    public String toString() {
+        return this.numerator + "/" + this.denominator;
     }
 }

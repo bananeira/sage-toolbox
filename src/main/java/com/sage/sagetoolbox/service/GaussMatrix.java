@@ -1,14 +1,18 @@
 package com.sage.sagetoolbox.service;
 
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+
+import static java.lang.Math.abs;
 
 public class GaussMatrix {
     private static Fraction[][] matrix;
 
     public static void setMatrix(int m, int n, List<Integer> elements) {
-        matrix = new Fraction[m][n];
+        matrix = new Fraction[abs(m)][abs(n)];
 
         int elementPos = 0;
 
@@ -16,9 +20,9 @@ public class GaussMatrix {
             for (int j = 0; j < n; j++) {
                 if (elementPos < elements.size()) {
                     matrix[i][j] = new Fraction();
-                    matrix[i][j].setNum(elements.get(elementPos));
+                    matrix[i][j].setNum(BigInteger.valueOf(elements.get(elementPos)));
                 } else {
-                    matrix[i][j] = new Fraction(0, 1);
+                    matrix[i][j] = new Fraction(BigInteger.valueOf(0), BigInteger.valueOf(1));
                 }
 
                 elementPos++;
@@ -32,10 +36,10 @@ public class GaussMatrix {
 
     public static void multiply(int row, Fraction factor) {
         for (int i = 0; i < matrix[row].length; i++) {
-            matrix[row][i].setNum(matrix[row][i].getNum() * factor.getNum());
-            matrix[row][i].setDen(matrix[row][i].getDen() * factor.getDen());
+            matrix[row][i].setNum(matrix[row][i].getNum().multiply(factor.getNum()));
+            matrix[row][i].setDen(matrix[row][i].getDen().multiply(factor.getDen()));
 
-            matrix[row][i] = shortenFractionsMax(matrix[row][i]);
+            matrix[row][i].shortenFractionsMax();
         }
     }
 
@@ -47,45 +51,27 @@ public class GaussMatrix {
         Fraction[] temp = new Fraction[matrix[fromRow].length];
 
         for (int j = 0; j < matrix[fromRow].length; j++) {
+            temp[j] = new Fraction(matrix[fromRow][j].getNum(), matrix[fromRow][j].getDen());
+
             temp[j].setNum(matrix[fromRow][j].getNum());
             temp[j].setDen(matrix[fromRow][j].getDen());
         }
 
         for (Fraction fraction : temp) {
-            fraction.setNum(fraction.getNum() * multiple.getNum());
-            fraction.setDen(fraction.getDen() * multiple.getDen());
+            fraction.setNum(fraction.getNum().multiply(multiple.getNum()));
+            fraction.setDen(fraction.getDen().multiply(multiple.getDen()));
         }
 
         for (int i = 0; i < matrix[toRow].length; i++) {
-            temp[i].setNum(temp[i].getNum() * matrix[toRow][i].getDen());
+            temp[i].setNum(temp[i].getNum().multiply(matrix[toRow][i].getDen()));
 
-            matrix[toRow][i].setNum(matrix[toRow][i].getNum() * temp[i].getDen());
-            matrix[toRow][i].setDen(matrix[toRow][i].getDen() * temp[i].getDen());
+            matrix[toRow][i].setNum(matrix[toRow][i].getNum().multiply(temp[i].getDen()));
+            matrix[toRow][i].setDen(matrix[toRow][i].getDen().multiply(temp[i].getDen()));
 
-            matrix[toRow][i].setNum(matrix[toRow][i].getNum() * temp[i].getNum());
+            matrix[toRow][i].setNum(matrix[toRow][i].getNum().add(temp[i].getNum()));
 
-            matrix[toRow][i] = shortenFractionsMax(matrix[toRow][i]);
+            matrix[toRow][i].shortenFractionsMax();
         }
-    }
-
-    private static int[][] deepCopy(int[][] original) {
-        final int[][] result = new int[original.length][];
-        for (int i = 0; i < original.length; i++) {
-            result[i] = Arrays.copyOf(original[i], original[i].length);
-        }
-        return result;
-    }
-
-    private static Fraction shortenFractionsMax(Fraction fraction) {
-        Fraction toShortened = new Fraction(fraction.getNum(), fraction.getDen());
-        int divisor = EuclideanAlgorithm.fastGCD(toShortened.getNum(), toShortened.getDen());
-
-        if (divisor == 1) return fraction;
-
-        toShortened.setNum(toShortened.getNum() / divisor);
-        toShortened.setDen(toShortened.getDen() / divisor);
-
-        return toShortened;
     }
 
     public static boolean checkForLineLevelForm() {
@@ -124,7 +110,7 @@ public class GaussMatrix {
     public static boolean checkLineDifferentFromZero(int line) {
         boolean lineIsNotZeroes = false;
         for (int j = 0; j < matrix[line].length; j++) {
-            if (matrix[line][j].getNum() != 0) {
+            if (!Objects.equals(matrix[line][j].getNum(), BigInteger.valueOf(0))) {
                 lineIsNotZeroes = true;
                 break;
             }
@@ -136,7 +122,7 @@ public class GaussMatrix {
     public static boolean checkColumnDifferentFromZero(int column) {
         boolean columnIsNotZeroes = false;
         for (Fraction[] fractions : matrix) {
-            if (fractions[column].getNum() != 0) {
+            if (!Objects.equals(fractions[column].getNum(), BigInteger.valueOf(0))) {
                 columnIsNotZeroes = true;
                 break;
             }
@@ -145,10 +131,10 @@ public class GaussMatrix {
         return columnIsNotZeroes;
     }
 
-    public static boolean checkColumnDifferentFromZero(int column, int ignoreRowsAboveEq) {
+    public static boolean checkColumnDifferentFromZero(int column, int ignoreRowsAboveNeq) {
         boolean columnIsNotZeroes = false;
-        for (int i = ignoreRowsAboveEq; i < matrix.length; i++) {
-            if (matrix[i][column].getNum() != 0) {
+        for (int i = ignoreRowsAboveNeq; i < matrix.length; i++) {
+            if (!Objects.equals(matrix[i][column].getNum(), BigInteger.valueOf(0))) {
                 columnIsNotZeroes = true;
                 break;
             }
@@ -162,19 +148,19 @@ public class GaussMatrix {
 
         for (Fraction[] fractions : matrix) {
             for (int j = 0; j < fractions.length; j++) {
-                if ((fractions[j].getNum() != 1
-                        && fractions[j].getNum() != 0
-                        || fractions[j].getDen() != 1)) {
+                if ((!Objects.equals(fractions[j].getNum(), BigInteger.valueOf(1))
+                        && !Objects.equals(fractions[j].getNum(), BigInteger.valueOf(0))
+                        || !Objects.equals(fractions[j].getDen(), BigInteger.valueOf(1)))) {
                     return false;
                 }
 
-                if (fractions[j].getNum() == 1
-                        && fractions[j].getDen() == 1
+                if (Objects.equals(fractions[j].getNum(), BigInteger.valueOf(1))
+                        && Objects.equals(fractions[j].getDen(), BigInteger.valueOf(1))
                         && j > furthest) {
                     furthest = j;
                     break;
-                } else if (fractions[j].getNum() == 1
-                        && fractions[j].getDen() == 1
+                } else if (Objects.equals(fractions[j].getNum(), BigInteger.valueOf(1))
+                        && Objects.equals(fractions[j].getDen(), BigInteger.valueOf(1))
                         && j <= furthest) {
                     return false;
                 }

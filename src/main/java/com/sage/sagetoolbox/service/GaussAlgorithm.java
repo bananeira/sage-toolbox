@@ -1,56 +1,90 @@
 package com.sage.sagetoolbox.service;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class GaussAlgorithm {
-    private static int[][][] matrix;
-    public void matrixToLineLevelForm(int n, int m, List<Integer> list) {
-        GaussMatrices.setMatrix(n, m, list);
+    private static Fraction[][] matrix;
+    private static int firstColumnDifferentFromZero;
+    private static int ignoreRowsAboveNeq = 0;
+    private static Fraction currentFirstInColumn;
+    private static final List<String> visualizedOperations = new ArrayList<>();
+    private static final List<Integer> operationsOnPass = new ArrayList<>();
+    private static int pass = 0;
 
+    public static void matrixToLineLevelForm(int n, int m, List<Integer> list) {
+        GaussMatrix.setMatrix(n, m, list);
+        matrix = GaussMatrix.getMatrix();
 
+        while (!GaussMatrix.checkForLineLevelForm()) {
+            operationsOnPass.add(0);
+            firstColumnDifferentFromZero = columnDifferentFromZero(firstColumnDifferentFromZero);
+            currentFirstInColumn = matrix[ignoreRowsAboveNeq][firstColumnDifferentFromZero];
+            ensureFirstInColumnDifferentFromZero();
+            makeFirstElementOne();
+            eliminateElementsBelowFirst();
+            if (ignoreRowsAboveNeq < matrix.length - 1) {
+                ignoreRowsAboveNeq++;
+            }
+            pass++;
+        }
     }
 
-    private static boolean checkForLineLevelForm() {
-        matrix = GaussMatrices.getMatrix();
-        /* (i) All rows containing only zeros are at the bottom of the matrix. */
-        /* (i) All rows containing only zeros are at the bottom of the matrix. */
-        /* (i) All rows containing only zeros are at the bottom of the matrix. */
-        boolean criteria1 = checkZeroesOnBottom(matrix);
-        boolean criteria2 = false;
-        boolean criteria3 = false;
-
-        return criteria1 && criteria2 && criteria3;
-    }
-
-    private static boolean checkZeroesOnBottom(int[][][] matrix) {
-        boolean bottomDifferentFromZero = false;
-
-        for (int i = 0; i < matrix.length; i++) {
-            if (!checkLineDifferentFromZero(i)) {
-                bottomDifferentFromZero = true;
-            }
-
-            if (bottomDifferentFromZero && checkLineDifferentFromZero(i)) {
-                return false;
-            }
-
-            if (!bottomDifferentFromZero && i == matrix.length - 1) {
-                return true;
+    private static int columnDifferentFromZero(int startColumn) {
+        for (int j = firstColumnDifferentFromZero; j < matrix[firstColumnDifferentFromZero].length; j++) {
+            if (GaussMatrix.checkColumnDifferentFromZero(j, ignoreRowsAboveNeq)) {
+                startColumn = j;
+                return startColumn;
             }
         }
 
-        return bottomDifferentFromZero;
+        return startColumn;
     }
 
-    private static boolean checkLineDifferentFromZero(int line) {
-        boolean lineIsNotZeroes = false;
-        for (int j = 0; j < matrix[line].length; j++) {
+    private static void ensureFirstInColumnDifferentFromZero() {
+        if (Objects.equals(currentFirstInColumn.getNum(), BigInteger.valueOf(0))) {
+            for (int i = ignoreRowsAboveNeq + 1; i < matrix.length; i++) {
+                if (!Objects.equals(matrix[i][firstColumnDifferentFromZero].getNum(), BigInteger.valueOf(0))) {
+                    GaussMatrix.swap(i, ignoreRowsAboveNeq);
+                    currentFirstInColumn = matrix[ignoreRowsAboveNeq][firstColumnDifferentFromZero];
 
-            if (matrix[line][j][0] != 0) {
-                lineIsNotZeroes = true;
+                    visualizedOperations.add(pass + "::swap::" + ignoreRowsAboveNeq + "::" + i);
+                    operationsOnPass.set(pass,
+                            operationsOnPass.get(pass) + 1);
+                }
             }
         }
+    }
 
-        return lineIsNotZeroes;
+    private static void makeFirstElementOne() {
+        if (!((Objects.equals(currentFirstInColumn.getNum(), BigInteger.valueOf(1))
+                || Objects.equals(currentFirstInColumn.getNum(), BigInteger.valueOf(0)))
+                && Objects.equals(currentFirstInColumn.getDen(), BigInteger.valueOf(1)))) {
+            Fraction factor;
+
+            factor = new Fraction(currentFirstInColumn.getDen(), currentFirstInColumn.getNum());
+            GaussMatrix.multiply(ignoreRowsAboveNeq, factor);
+
+            visualizedOperations.add(pass + "::mult::" + factor + "::" + ignoreRowsAboveNeq);
+            operationsOnPass.set(pass,
+                    operationsOnPass.get(pass) + 1);
+        }
+    }
+
+    private static void eliminateElementsBelowFirst() {
+        for (int i = ignoreRowsAboveNeq + 1; i < matrix.length; i++) {
+            if (!(Objects.equals(matrix[i][firstColumnDifferentFromZero].getNum(), BigInteger.valueOf(0))
+                    && Objects.equals(matrix[i][firstColumnDifferentFromZero].getDen(), BigInteger.valueOf(1)))) {
+                Fraction factor = new Fraction(matrix[i][firstColumnDifferentFromZero].getNum().multiply(BigInteger.valueOf(-1)),
+                        matrix[i][firstColumnDifferentFromZero].getDen());
+                GaussMatrix.add(factor, ignoreRowsAboveNeq, i);
+                visualizedOperations.add(pass + "::add::" + factor + "::" + ignoreRowsAboveNeq + "::" + i);
+                operationsOnPass.set(pass,
+                        operationsOnPass.get(pass) + 1);
+            }
+        }
     }
 }

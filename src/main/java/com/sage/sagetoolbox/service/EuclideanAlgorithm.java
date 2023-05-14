@@ -1,7 +1,9 @@
 package com.sage.sagetoolbox.service;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static java.lang.Math.*;
 
@@ -12,6 +14,48 @@ public class EuclideanAlgorithm {
         }
 
         return fastGCD(number2, number1 % number2);
+    }
+
+    public static BigInteger fastGCD(BigInteger number1, BigInteger number2) {
+        if (Objects.equals(number2, BigInteger.valueOf(0))) {
+            return number1;
+        }
+
+        return fastGCD(number2, bigIntModulo(number1, number2));
+    }
+
+    public static BigInteger bigIntModulo(BigInteger number1, BigInteger number2) {
+        if (Objects.equals(number2, BigInteger.valueOf(1)) || Objects.equals(number2, BigInteger.valueOf(-1))) {
+            return BigInteger.ZERO;
+        }
+
+        if (number1.compareTo(BigInteger.ZERO) < 0 && number2.compareTo(BigInteger.ZERO) < 0) {
+            number1 = number1.multiply(BigInteger.valueOf(-1));
+            number2 = number2.multiply(BigInteger.valueOf(-1));
+            BigInteger modulo = number1.mod(number2);
+
+            return modulo.multiply(BigInteger.valueOf(-1));
+        } else if (number1.compareTo(BigInteger.ZERO) < 0 && number2.compareTo(BigInteger.ZERO) >= 0) {
+            BigInteger modulo = number1;
+
+            while (modulo.compareTo(BigInteger.ZERO) < 0) {
+                modulo = modulo.add(number2);
+            }
+
+            return modulo;
+        } else if (number2.compareTo(BigInteger.ZERO) < 0 && number1.compareTo(BigInteger.ZERO) >= 0) {
+            BigInteger modulo = number1.multiply(BigInteger.valueOf(-1));
+
+            while (modulo.compareTo(BigInteger.ZERO) < 0) {
+                modulo = modulo.add(number2.multiply(BigInteger.valueOf(-1)));
+            }
+
+            return modulo.multiply(BigInteger.valueOf(-1));
+        } else if (number2.equals(BigInteger.valueOf(0))) {
+            return null;
+        }
+
+        return number1.mod(number2);
     }
 
     public static List<List<Integer>> findGCD(int numberA, int numberB) {
