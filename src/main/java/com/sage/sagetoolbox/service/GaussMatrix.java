@@ -98,10 +98,6 @@ public class GaussMatrix {
             if (bottomDifferentFromZero && checkLineDifferentFromZero(i)) {
                 return false;
             }
-
-            /*if (!bottomDifferentFromZero && i == matrix.length - 1) {
-                return true;
-            }*/
         }
 
         return true;
