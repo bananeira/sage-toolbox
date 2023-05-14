@@ -48,13 +48,48 @@ public class Fraction {
     }
 
     public void shortenFractionsMax() {
-        Fraction toShortened = new Fraction(this.numerator, this.denominator);
-        BigInteger divisor = EuclideanAlgorithm.fastGCD(toShortened.getNum(), toShortened.getDen());
+        BigInteger divisor = EuclideanAlgorithm.fastGCD(this.numerator, this.denominator);
 
-        if (Objects.equals(divisor, BigInteger.valueOf(1))) return;
+        if (Objects.equals(divisor, BigInteger.ONE) || Objects.equals(divisor, BigInteger.ZERO)) return;
 
         this.numerator = this.numerator.divide(divisor);
         this.denominator = this.denominator.divide(divisor);
+    }
+
+    public void add(Fraction fraction) {
+        fraction = new Fraction(fraction.getNum(), fraction.getDen());
+        fraction.setNum(fraction.numerator.multiply(this.denominator));
+
+        this.denominator = this.denominator.multiply(fraction.getDen());
+        this.numerator = this.numerator.multiply(fraction.getDen());
+
+        this.numerator = this.numerator.add(fraction.getNum());
+        shortenFractionsMax();
+    }
+
+    public void subtract(Fraction fraction) {
+        fraction = new Fraction(fraction.getNum(), fraction.getDen());
+        fraction.setNum(fraction.numerator.multiply(this.denominator));
+
+        this.denominator = this.numerator.multiply(fraction.getDen());
+        this.numerator = this.numerator.multiply(fraction.getDen());
+
+        this.numerator = this.numerator.subtract(fraction.numerator);
+        shortenFractionsMax();
+    }
+
+    public void multiply(Fraction fraction) {
+        fraction = new Fraction(fraction.getNum(), fraction.getDen());
+        this.numerator = this.numerator.multiply(fraction.getNum());
+        this.denominator = this.denominator.multiply(fraction.getDen());
+        shortenFractionsMax();
+    }
+
+    public void divide(Fraction fraction) {
+        fraction = new Fraction(fraction.getNum(), fraction.getDen());
+        this.numerator = this.numerator.multiply(fraction.getDen());
+        this.denominator = this.denominator.multiply(fraction.getNum());
+        shortenFractionsMax();
     }
 
     @Override

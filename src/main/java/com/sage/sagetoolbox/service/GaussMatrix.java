@@ -36,10 +36,7 @@ public class GaussMatrix {
 
     public static void multiply(int row, Fraction factor) {
         for (int i = 0; i < matrix[row].length; i++) {
-            matrix[row][i].setNum(matrix[row][i].getNum().multiply(factor.getNum()));
-            matrix[row][i].setDen(matrix[row][i].getDen().multiply(factor.getDen()));
-
-            matrix[row][i].shortenFractionsMax();
+            matrix[row][i].multiply(factor);
         }
     }
 
@@ -47,8 +44,8 @@ public class GaussMatrix {
         Collections.swap(Arrays.asList(matrix), fromRow, toRow);
     }
 
-    public static void add(Fraction multiple, int fromRow, int toRow) {
-        Fraction[] temp = new Fraction[matrix[fromRow].length];
+    public static void add(Fraction factor, int fromRow, int toRow) {
+        Fraction[] temp = Arrays.copyOf(matrix[fromRow], matrix[fromRow].length);
 
         for (int j = 0; j < matrix[fromRow].length; j++) {
             temp[j] = new Fraction(matrix[fromRow][j].getNum(), matrix[fromRow][j].getDen());
@@ -58,19 +55,11 @@ public class GaussMatrix {
         }
 
         for (Fraction fraction : temp) {
-            fraction.setNum(fraction.getNum().multiply(multiple.getNum()));
-            fraction.setDen(fraction.getDen().multiply(multiple.getDen()));
+            fraction.multiply(factor);
         }
 
         for (int i = 0; i < matrix[toRow].length; i++) {
-            temp[i].setNum(temp[i].getNum().multiply(matrix[toRow][i].getDen()));
-
-            matrix[toRow][i].setNum(matrix[toRow][i].getNum().multiply(temp[i].getDen()));
-            matrix[toRow][i].setDen(matrix[toRow][i].getDen().multiply(temp[i].getDen()));
-
-            matrix[toRow][i].setNum(matrix[toRow][i].getNum().add(temp[i].getNum()));
-
-            matrix[toRow][i].shortenFractionsMax();
+            matrix[toRow][i].add(temp[i]);
         }
     }
 
