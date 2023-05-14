@@ -12,15 +12,15 @@ public class Fraction {
         this.numerator = numerator;
         this.denominator = denominator;
 
-        if (denominator.compareTo(BigInteger.valueOf(0)) < 0) {
+        if (denominator.compareTo(BigInteger.ZERO) < 0) {
             this.denominator = this.denominator.multiply(BigInteger.valueOf(-1));
             this.numerator = this.numerator.multiply(BigInteger.valueOf(-1));
         }
     }
 
     public Fraction() {
-        this.numerator = BigInteger.valueOf(0);
-        this.denominator = BigInteger.valueOf(1);
+        this.numerator = BigInteger.ZERO;
+        this.denominator = BigInteger.ONE;
     }
 
 
@@ -37,8 +37,8 @@ public class Fraction {
     }
 
     public void setDen(BigInteger denominator) {
-        if (!Objects.equals(denominator, BigInteger.valueOf(0))) {
-            if (denominator.compareTo(BigInteger.valueOf(0)) < 0) {
+        if (!Objects.equals(denominator, BigInteger.ZERO)) {
+            if (denominator.compareTo(BigInteger.ZERO) < 0) {
                 this.denominator = this.denominator.multiply(BigInteger.valueOf(-1));
                 this.numerator = this.numerator.multiply(BigInteger.valueOf(-1));
             } else {

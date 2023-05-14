@@ -22,7 +22,7 @@ public class GaussMatrix {
                     matrix[i][j] = new Fraction();
                     matrix[i][j].setNum(BigInteger.valueOf(elements.get(elementPos)));
                 } else {
-                    matrix[i][j] = new Fraction(BigInteger.valueOf(0), BigInteger.valueOf(1));
+                    matrix[i][j] = new Fraction(BigInteger.ZERO, BigInteger.ONE);
                 }
 
                 elementPos++;
@@ -95,7 +95,7 @@ public class GaussMatrix {
     public static boolean checkLineDifferentFromZero(int line) {
         boolean lineIsNotZeroes = false;
         for (int j = 0; j < matrix[line].length; j++) {
-            if (!Objects.equals(matrix[line][j].getNum(), BigInteger.valueOf(0))) {
+            if (!Objects.equals(matrix[line][j].getNum(), BigInteger.ZERO)) {
                 lineIsNotZeroes = true;
                 break;
             }
@@ -107,7 +107,7 @@ public class GaussMatrix {
     public static boolean checkColumnDifferentFromZero(int column) {
         boolean columnIsNotZeroes = false;
         for (Fraction[] fractions : matrix) {
-            if (!Objects.equals(fractions[column].getNum(), BigInteger.valueOf(0))) {
+            if (!Objects.equals(fractions[column].getNum(), BigInteger.ZERO)) {
                 columnIsNotZeroes = true;
                 break;
             }
@@ -119,7 +119,7 @@ public class GaussMatrix {
     public static boolean checkColumnDifferentFromZero(int column, int ignoreRowsAboveNeq) {
         boolean columnIsNotZeroes = false;
         for (int i = ignoreRowsAboveNeq; i < matrix.length; i++) {
-            if (!Objects.equals(matrix[i][column].getNum(), BigInteger.valueOf(0))) {
+            if (!Objects.equals(matrix[i][column].getNum(), BigInteger.ZERO)) {
                 columnIsNotZeroes = true;
                 break;
             }
@@ -133,19 +133,19 @@ public class GaussMatrix {
 
         for (Fraction[] fractions : matrix) {
             for (int j = 0; j < fractions.length; j++) {
-                if ((!Objects.equals(fractions[j].getNum(), BigInteger.valueOf(1))
-                        && !Objects.equals(fractions[j].getNum(), BigInteger.valueOf(0))
-                        || !Objects.equals(fractions[j].getDen(), BigInteger.valueOf(1)))) {
+                if ((!Objects.equals(fractions[j].getNum(), BigInteger.ONE)
+                        && !Objects.equals(fractions[j].getNum(), BigInteger.ZERO)
+                        || !Objects.equals(fractions[j].getDen(), BigInteger.ONE))) {
                     return false;
                 }
 
-                if (Objects.equals(fractions[j].getNum(), BigInteger.valueOf(1))
-                        && Objects.equals(fractions[j].getDen(), BigInteger.valueOf(1))
+                if (Objects.equals(fractions[j].getNum(), BigInteger.ONE)
+                        && Objects.equals(fractions[j].getDen(), BigInteger.ONE)
                         && j > furthest) {
                     furthest = j;
                     break;
-                } else if (Objects.equals(fractions[j].getNum(), BigInteger.valueOf(1))
-                        && Objects.equals(fractions[j].getDen(), BigInteger.valueOf(1))
+                } else if (Objects.equals(fractions[j].getNum(), BigInteger.ONE)
+                        && Objects.equals(fractions[j].getDen(), BigInteger.ONE)
                         && j <= furthest) {
                     return false;
                 }
