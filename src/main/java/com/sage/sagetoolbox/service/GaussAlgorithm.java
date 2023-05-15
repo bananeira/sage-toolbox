@@ -15,17 +15,68 @@ public class GaussAlgorithm {
     private static final List<Integer> operationsOnPass = new ArrayList<>();
     private static int pass = 0;
 
-    public static void matrixToLineLevelForm(int n, int m, List<Integer> list) {
-        GaussMatrix.setMatrix(n, m, list);
+    public static void matrixToLineLevelForm(int m, int n, List<Integer> list) {
+        GaussMatrix.setMatrix(m, n, list);
         matrix = GaussMatrix.getMatrix();
+
+        System.out.println("starting with: " + Arrays.deepToString(GaussMatrix.getMatrix()));
+        System.out.println();
 
         while (!GaussMatrix.checkForLineLevelForm()) {
             operationsOnPass.add(0);
             firstColumnDifferentFromZero = columnDifferentFromZero(firstColumnDifferentFromZero);
             currentFirstInColumn = matrix[ignoreRowsAboveNeq][firstColumnDifferentFromZero];
+
+            System.out.println(Arrays.deepToString(GaussMatrix.getMatrix()));
+            System.out.print("#" + operationsOnPass.get(pass));
+            System.out.print(" on pass: " + pass);
+            if (visualizedOperations.size() != 0) {
+                System.out.println(", op: " + visualizedOperations.subList(visualizedOperations.size() - operationsOnPass.get(pass), visualizedOperations.size()));
+            } else {
+                System.out.println(", no ops yet");
+            }
+            System.out.println();
+
             ensureFirstInColumnDifferentFromZero();
+
+            System.out.println(Arrays.deepToString(GaussMatrix.getMatrix()));
+            System.out.print("#" + operationsOnPass.get(pass));
+            System.out.print(" on pass: " + pass);
+            if (visualizedOperations.size() != 0) {
+                System.out.println(", op: " + visualizedOperations.subList(visualizedOperations.size() - operationsOnPass.get(pass), visualizedOperations.size()));
+            } else {
+                System.out.println(", no ops yet");
+            }
+            System.out.println();
+
             makeFirstElementOne();
+
+            System.out.println(Arrays.deepToString(GaussMatrix.getMatrix()));
+            System.out.print("#" + operationsOnPass.get(pass));
+            System.out.print(" on pass: " + pass);
+            if (visualizedOperations.size() != 0) {
+                System.out.println(", op: " + visualizedOperations.subList(visualizedOperations.size() - operationsOnPass.get(pass), visualizedOperations.size()));
+            } else {
+                System.out.println(", no ops yet");
+            }
+            System.out.println();
+
             eliminateElementsBelowFirst();
+
+            System.out.println(Arrays.deepToString(GaussMatrix.getMatrix()));
+            System.out.print("#" + operationsOnPass.get(pass));
+            System.out.print(" on pass: " + pass);
+            if (visualizedOperations.size() != 0) {
+                System.out.println(", op: " + visualizedOperations.subList(visualizedOperations.size() - operationsOnPass.get(pass), visualizedOperations.size()));
+            } else {
+                System.out.println(", no ops yet");
+            }
+            System.out.println();
+            System.out.println("linelevelform? " + GaussMatrix.checkForLineLevelForm());
+            System.out.println();
+            System.out.println("sum of operations: " + operationsOnPass);
+            System.out.println();
+
             if (ignoreRowsAboveNeq < matrix.length - 1) {
                 ignoreRowsAboveNeq++;
             }
@@ -45,9 +96,9 @@ public class GaussAlgorithm {
     }
 
     private static void ensureFirstInColumnDifferentFromZero() {
-        if (Objects.equals(currentFirstInColumn.getNum(), BigInteger.valueOf(0))) {
+        if (Objects.equals(currentFirstInColumn.getNum(), BigInteger.ZERO)) {
             for (int i = ignoreRowsAboveNeq + 1; i < matrix.length; i++) {
-                if (!Objects.equals(matrix[i][firstColumnDifferentFromZero].getNum(), BigInteger.valueOf(0))) {
+                if (!Objects.equals(matrix[i][firstColumnDifferentFromZero].getNum(), BigInteger.ZERO)) {
                     GaussMatrix.swap(i, ignoreRowsAboveNeq);
                     currentFirstInColumn = matrix[ignoreRowsAboveNeq][firstColumnDifferentFromZero];
 
@@ -60,9 +111,9 @@ public class GaussAlgorithm {
     }
 
     private static void makeFirstElementOne() {
-        if (!((Objects.equals(currentFirstInColumn.getNum(), BigInteger.valueOf(1))
-                || Objects.equals(currentFirstInColumn.getNum(), BigInteger.valueOf(0)))
-                && Objects.equals(currentFirstInColumn.getDen(), BigInteger.valueOf(1)))) {
+        if (!((Objects.equals(currentFirstInColumn.getNum(), BigInteger.ONE)
+                || Objects.equals(currentFirstInColumn.getNum(), BigInteger.ZERO))
+                && Objects.equals(currentFirstInColumn.getDen(), BigInteger.ONE))) {
             Fraction factor;
 
             factor = new Fraction(currentFirstInColumn.getDen(), currentFirstInColumn.getNum());
@@ -76,8 +127,8 @@ public class GaussAlgorithm {
 
     private static void eliminateElementsBelowFirst() {
         for (int i = ignoreRowsAboveNeq + 1; i < matrix.length; i++) {
-            if (!(Objects.equals(matrix[i][firstColumnDifferentFromZero].getNum(), BigInteger.valueOf(0))
-                    && Objects.equals(matrix[i][firstColumnDifferentFromZero].getDen(), BigInteger.valueOf(1)))) {
+            if (!(Objects.equals(matrix[i][firstColumnDifferentFromZero].getNum(), BigInteger.ZERO)
+                    && Objects.equals(matrix[i][firstColumnDifferentFromZero].getDen(), BigInteger.ONE))) {
                 Fraction factor = new Fraction(matrix[i][firstColumnDifferentFromZero].getNum().multiply(BigInteger.valueOf(-1)),
                         matrix[i][firstColumnDifferentFromZero].getDen());
                 GaussMatrix.add(factor, ignoreRowsAboveNeq, i);

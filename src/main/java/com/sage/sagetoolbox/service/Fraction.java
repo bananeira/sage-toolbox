@@ -18,11 +18,20 @@ public class Fraction {
         }
     }
 
+    public Fraction(Fraction fraction) {
+        this.numerator = fraction.getNum();
+        this.denominator = fraction.getDen();
+
+        if (denominator.compareTo(BigInteger.ZERO) < 0) {
+            this.denominator = this.denominator.multiply(BigInteger.valueOf(-1));
+            this.numerator = this.numerator.multiply(BigInteger.valueOf(-1));
+        }
+    }
+
     public Fraction() {
         this.numerator = BigInteger.ZERO;
         this.denominator = BigInteger.ONE;
     }
-
 
     public BigInteger getNum() {
         return numerator;
@@ -71,10 +80,10 @@ public class Fraction {
         fraction = new Fraction(fraction.getNum(), fraction.getDen());
         fraction.setNum(fraction.numerator.multiply(this.denominator));
 
-        this.denominator = this.numerator.multiply(fraction.getDen());
+        this.denominator = this.denominator.multiply(fraction.getDen());
         this.numerator = this.numerator.multiply(fraction.getDen());
 
-        this.numerator = this.numerator.subtract(fraction.numerator);
+        this.numerator = this.numerator.subtract(fraction.getNum());
         shortenFractionsMax();
     }
 
