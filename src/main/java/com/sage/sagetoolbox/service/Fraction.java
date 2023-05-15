@@ -78,6 +78,11 @@ public class Fraction {
         shortenFractionsMax();
     }
 
+    public void multiply(BigInteger factor) {
+        this.numerator = this.numerator.multiply(factor);
+        shortenFractionsMax();
+    }
+
     public void multiply(Fraction fraction) {
         fraction = new Fraction(fraction.getNum(), fraction.getDen());
         this.numerator = this.numerator.multiply(fraction.getNum());
@@ -94,6 +99,6 @@ public class Fraction {
 
     @Override
     public String toString() {
-        return this.numerator + "/" + this.denominator;
+        return Objects.equals(this.denominator, BigInteger.ONE) ? String.valueOf(this.numerator) : this.numerator + "/" + this.denominator;
     }
 }

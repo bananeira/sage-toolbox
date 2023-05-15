@@ -154,5 +154,14 @@ public class GaussMatrix {
 
         return true;
     }
+
+    public static int getPosOfLeadingOne(int row) {
+        for (int j = 0; j < matrix[row].length; j++) {
+            if (Objects.equals(matrix[row][j].getDen(), BigInteger.ONE)
+                    && Objects.equals(matrix[row][j].getNum(), BigInteger.ONE)) return j;
+        }
+
+        return -1;
+    }
 }
 
