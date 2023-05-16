@@ -15,7 +15,7 @@ public class GaussAlgorithm {
     private static final List<Integer> operationsOnPass = new ArrayList<>();
     private static int pass = 0;
 
-    public static void matrixToLineLevelForm(int m, int n, List<Integer> list) {
+    public static void matrixToLineLevelForm(int m, int n, List<String> list) throws Exception {
         GaussMatrix.setMatrix(m, n, list);
         matrix = GaussMatrix.getMatrix();
 

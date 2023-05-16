@@ -1,28 +1,38 @@
 package com.sage.sagetoolbox.service;
 
 import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static java.lang.Math.abs;
 
 public class GaussMatrix {
     private static Fraction[][] matrix;
 
-    public static void setMatrix(int m, int n, List<Integer> elements) {
+    public static void setMatrix(int m, int n, List<String> elements) throws Exception {
         matrix = new Fraction[abs(m)][abs(n)];
 
         int elementPos = 0;
 
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
+                matrix[i][j] = new Fraction();
+
                 if (elementPos < elements.size()) {
-                    matrix[i][j] = new Fraction();
-                    matrix[i][j].setNum(BigInteger.valueOf(elements.get(elementPos)));
+                    try {
+                        String[] unformattedFraction = elements.get(elementPos).split("/",2);
+
+                        if (unformattedFraction.length == 2 && !new BigInteger(unformattedFraction[1]).equals(BigInteger.ZERO)) {
+                            matrix[i][j].setNum(new BigInteger(unformattedFraction[0]));
+                            matrix[i][j].setDen(new BigInteger(unformattedFraction[1]));
+
+                        } else {
+                            matrix[i][j].setNum(new BigInteger(elements.get(elementPos)));
+                        }
+                    } catch (NumberFormatException numberFormatException) {
+                        throw new Exception("Fractions may only contain mathematical Integers, separators '/' between Integers and may not divide by zero (not '/0').");
+                    }
                 } else {
-                    matrix[i][j] = new Fraction(BigInteger.ZERO, BigInteger.ONE);
+                    matrix[i][j] = new Fraction();
                 }
 
                 elementPos++;
