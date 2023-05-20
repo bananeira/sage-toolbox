@@ -7,9 +7,8 @@ import java.util.List;
 import java.util.Objects;
 
 public class SolveEquationSystem {
-    public static List<Fraction[][]> tranformationHistory = new ArrayList<>();
-
-    public static void solveSystem(Fraction[][] augmentedMatrix) {
+    public static List<Fraction[][]> solveSystem(Fraction[][] augmentedMatrix) {
+        List<Fraction[][]> transformationHistory = new ArrayList<>();
         Fraction[][] expandedAugmentedSystem = new Fraction[augmentedMatrix.length][(augmentedMatrix[0].length * 2) - 1];
 
         for (int i = 0; i < expandedAugmentedSystem.length; i++) {
@@ -23,8 +22,7 @@ public class SolveEquationSystem {
             }
         }
 
-        tranformationHistory.add(expandedAugmentedSystem);
-        System.out.println("system given: " + Arrays.deepToString(expandedAugmentedSystem));
+        transformationHistory.add(returnDeepCopyOfMatrix(expandedAugmentedSystem));
 
         for (int i = 0; i < augmentedMatrix.length; i++) {
             for (int j = 0; j < augmentedMatrix[i].length - 1; j++) {
@@ -37,8 +35,7 @@ public class SolveEquationSystem {
             }
         }
 
-        tranformationHistory.add(expandedAugmentedSystem);
-        System.out.println("rearranging: " + Arrays.deepToString(expandedAugmentedSystem));
+        transformationHistory.add(returnDeepCopyOfMatrix(expandedAugmentedSystem));
 
         for (int i = 0; i < expandedAugmentedSystem.length; i++) {
             for (int j = augmentedMatrix[i].length; j < expandedAugmentedSystem[i].length; j++) {
@@ -49,8 +46,9 @@ public class SolveEquationSystem {
                 substituteRow(augmentedMatrix, expandedAugmentedSystem, i, j);
             }
         }
-        tranformationHistory.add(expandedAugmentedSystem);
-        System.out.println("after transformations: " + Arrays.deepToString(expandedAugmentedSystem));
+        transformationHistory.add(returnDeepCopyOfMatrix(expandedAugmentedSystem));
+
+        return transformationHistory;
     }
 
     private static void substituteRow(Fraction[][] augmentedMatrix, Fraction[][] expandedAugmentedSystem, int i, int j) {
@@ -83,5 +81,21 @@ public class SolveEquationSystem {
         }
 
         return -1;
+    }
+
+    private static Fraction[][] returnDeepCopyOfMatrix(Fraction[][] matrix) {
+        return getFractions(matrix);
+    }
+
+    static Fraction[][] getFractions(Fraction[][] matrix) {
+        Fraction[][] newMatrix = new Fraction[matrix.length][matrix[0].length];
+
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                newMatrix[i][j] = new Fraction(matrix[i][j]);
+            }
+        }
+
+        return newMatrix;
     }
 }

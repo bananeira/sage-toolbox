@@ -13,8 +13,8 @@ public class Fraction {
         this.denominator = denominator;
 
         if (denominator.compareTo(BigInteger.ZERO) < 0) {
-            this.denominator = this.denominator.multiply(BigInteger.valueOf(-1));
             this.numerator = this.numerator.multiply(BigInteger.valueOf(-1));
+            this.denominator = this.denominator.multiply(BigInteger.valueOf(-1));
         }
     }
 

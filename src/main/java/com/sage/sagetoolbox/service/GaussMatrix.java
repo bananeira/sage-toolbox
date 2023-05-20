@@ -173,5 +173,34 @@ public class GaussMatrix {
 
         return -1;
     }
+
+    public static boolean resultsInIllegalEquation() {
+        boolean rowFound = false;
+        int row = -1;
+
+        for (int i = matrix.length - 1; i >= 0; i--) {
+            if (rowFound) break;
+
+            for (int j = 0; j < matrix[i].length; j++) {
+                if (!Objects.equals(matrix[i][j].getNum(), BigInteger.ZERO)) {
+                    rowFound = true;
+                    row = i;
+                    break;
+                }
+            }
+        }
+
+        if (row != -1 && checkColumnDifferentFromZero(matrix[row].length - 1)) {
+            for (int j = 0; j < matrix[row].length - 1; j++) {
+                if (!Objects.equals(matrix[row][j].getNum(), BigInteger.ZERO)) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        return false;
+    }
 }
 
