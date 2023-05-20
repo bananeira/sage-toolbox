@@ -44,6 +44,7 @@ public class GaussAlgorithm {
         output.operationsOnPass = gaussAlgorithmData.operationsOnPass;
         output.eqSysTranformationHistory = SolveEquationSystem.solveSystem(GaussMatrix.getMatrix());
         output.containsIllegalEquation = GaussMatrix.resultsInIllegalEquation();
+        output.foundVariables = SolveEquationSystem.foundVariables;
 
         return output;
     }

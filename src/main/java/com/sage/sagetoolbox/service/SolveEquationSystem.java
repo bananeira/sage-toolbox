@@ -2,12 +2,13 @@ package com.sage.sagetoolbox.service;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 public class SolveEquationSystem {
+    public static List<Integer> foundVariables;
     public static List<Fraction[][]> solveSystem(Fraction[][] augmentedMatrix) {
+        foundVariables = new ArrayList<>();
         List<Fraction[][]> transformationHistory = new ArrayList<>();
         Fraction[][] expandedAugmentedSystem = new Fraction[augmentedMatrix.length][(augmentedMatrix[0].length * 2) - 1];
 
@@ -47,6 +48,10 @@ public class SolveEquationSystem {
             }
         }
         transformationHistory.add(returnDeepCopyOfMatrix(expandedAugmentedSystem));
+
+        for (int i = 0; i < expandedAugmentedSystem.length; i++) {
+            foundVariables.add(getPosOfLeadingOne(expandedAugmentedSystem, i));
+        }
 
         return transformationHistory;
     }

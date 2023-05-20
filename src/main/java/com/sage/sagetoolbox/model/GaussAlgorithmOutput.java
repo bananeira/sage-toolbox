@@ -10,4 +10,5 @@ public class GaussAlgorithmOutput {
     public List<Integer> operationsOnPass;
     public List<Fraction[][]> eqSysTranformationHistory;
     public boolean containsIllegalEquation;
+    public List<Integer> foundVariables;
 }
