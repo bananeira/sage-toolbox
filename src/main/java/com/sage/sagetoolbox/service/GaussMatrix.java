@@ -202,5 +202,31 @@ public class GaussMatrix {
 
         return false;
     }
+
+    public static boolean matrixExceedingBarrier(int barrier) {
+        for (Fraction[] rows : matrix) {
+            for (Fraction fraction : rows) {
+                if (fraction.getDen().compareTo(BigInteger.valueOf(barrier)) > 0
+                        || fraction.getNum().compareTo(BigInteger.valueOf(barrier)) > 0
+                        || fraction.getNum().compareTo(BigInteger.valueOf(-barrier)) < 0) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public static boolean matrixNotEmpty() {
+        for (Fraction[] rows : matrix) {
+            for (Fraction fraction : rows) {
+                if (fraction.getNum().compareTo(BigInteger.ZERO) != 0) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }
 

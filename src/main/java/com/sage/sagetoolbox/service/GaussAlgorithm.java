@@ -25,7 +25,8 @@ public class GaussAlgorithm {
             gaussAlgorithmData.operationsOnPass.add(0);
 
             gaussAlgorithmData.firstColumnDifferentFromZero = columnDifferentFromZero(gaussAlgorithmData);
-            gaussAlgorithmData.currentFirstInColumn = matrix[gaussAlgorithmData.ignoreRowsAboveNeq][gaussAlgorithmData.firstColumnDifferentFromZero];
+            gaussAlgorithmData.currentFirstInColumn
+                    = matrix[gaussAlgorithmData.ignoreRowsAboveNeq][gaussAlgorithmData.firstColumnDifferentFromZero];
 
             ensureFirstInColumnDifferentFromZero(gaussAlgorithmData);
             makeFirstElementOne(gaussAlgorithmData);
@@ -49,57 +50,72 @@ public class GaussAlgorithm {
         return output;
     }
 
-    private static int columnDifferentFromZero(GaussAlgorithmData gaussAlgorithmData) {
-        for (int j = gaussAlgorithmData.firstColumnDifferentFromZero; j < matrix[gaussAlgorithmData.firstColumnDifferentFromZero].length; j++) {
-            if (GaussMatrix.checkColumnDifferentFromZero(j, gaussAlgorithmData.ignoreRowsAboveNeq)) {
-                gaussAlgorithmData.firstColumnDifferentFromZero = j;
-                return gaussAlgorithmData.firstColumnDifferentFromZero;
+    private static int columnDifferentFromZero(GaussAlgorithmData gaussData) {
+        for (int j = gaussData.firstColumnDifferentFromZero; j < matrix[0].length; j++) {
+            if (GaussMatrix.checkColumnDifferentFromZero(j, gaussData.ignoreRowsAboveNeq)) {
+                gaussData.firstColumnDifferentFromZero = j;
+                return gaussData.firstColumnDifferentFromZero;
             }
         }
 
-        return gaussAlgorithmData.firstColumnDifferentFromZero;
+        return gaussData.firstColumnDifferentFromZero;
     }
 
-    private static void ensureFirstInColumnDifferentFromZero(GaussAlgorithmData gaussAlgorithmData) {
-        if (Objects.equals(gaussAlgorithmData.currentFirstInColumn.getNum(), BigInteger.ZERO)) {
-            for (int i = gaussAlgorithmData.ignoreRowsAboveNeq + 1; i < matrix.length; i++) {
-                if (!Objects.equals(matrix[i][gaussAlgorithmData.firstColumnDifferentFromZero].getNum(), BigInteger.ZERO)) {
-                    GaussMatrix.swap(i, gaussAlgorithmData.ignoreRowsAboveNeq);
-                    gaussAlgorithmData.currentFirstInColumn = matrix[gaussAlgorithmData.ignoreRowsAboveNeq][gaussAlgorithmData.firstColumnDifferentFromZero];
+    private static void ensureFirstInColumnDifferentFromZero(GaussAlgorithmData gaussData) {
+        if (Objects.equals(gaussData.currentFirstInColumn.getNum(), BigInteger.ZERO)) {
+            for (int i = gaussData.ignoreRowsAboveNeq + 1; i < matrix.length; i++) {
+                if (!Objects.equals(matrix[i][gaussData.firstColumnDifferentFromZero].getNum(), BigInteger.ZERO)) {
+                    GaussMatrix.swap(i, gaussData.ignoreRowsAboveNeq);
+                    gaussData.currentFirstInColumn =
+                            matrix[gaussData.ignoreRowsAboveNeq][gaussData.firstColumnDifferentFromZero];
 
-                    gaussAlgorithmData.visualizedOperations.add(gaussAlgorithmData.pass + "::swap::" + gaussAlgorithmData.ignoreRowsAboveNeq + "::" + i);
-                    gaussAlgorithmData.operationsOnPass.set(gaussAlgorithmData.pass,
-                            gaussAlgorithmData.operationsOnPass.get(gaussAlgorithmData.pass) + 1);
+                    gaussData.visualizedOperations
+                            .add(gaussData.pass + "::swap::" + gaussData.ignoreRowsAboveNeq + "::" + i);
+                    gaussData.operationsOnPass
+                            .set(gaussData.pass,
+                            gaussData.operationsOnPass.
+                                    get(gaussData.pass) + 1);
                 }
             }
         }
     }
 
-    private static void makeFirstElementOne(GaussAlgorithmData gaussAlgorithmData) {
-        if (!((Objects.equals(gaussAlgorithmData.currentFirstInColumn.getNum(), BigInteger.ONE)
-                || Objects.equals(gaussAlgorithmData.currentFirstInColumn.getNum(), BigInteger.ZERO))
-                && Objects.equals(gaussAlgorithmData.currentFirstInColumn.getDen(), BigInteger.ONE))) {
+    private static void makeFirstElementOne(GaussAlgorithmData gaussData) {
+        if (!((Objects.equals(gaussData.currentFirstInColumn.getNum(), BigInteger.ONE)
+                || Objects.equals(gaussData.currentFirstInColumn.getNum(), BigInteger.ZERO))
+                && Objects.equals(gaussData.currentFirstInColumn.getDen(), BigInteger.ONE))) {
             Fraction factor;
 
-            factor = new Fraction(gaussAlgorithmData.currentFirstInColumn.getDen(), gaussAlgorithmData.currentFirstInColumn.getNum());
-            GaussMatrix.multiply(gaussAlgorithmData.ignoreRowsAboveNeq, factor);
+            factor = new Fraction(gaussData.currentFirstInColumn.getDen(),
+                    gaussData.currentFirstInColumn.getNum());
+            GaussMatrix.multiply(gaussData.ignoreRowsAboveNeq, factor);
 
-            gaussAlgorithmData.visualizedOperations.add(gaussAlgorithmData.pass + "::mult::" + gaussAlgorithmData.ignoreRowsAboveNeq + "::" + factor);
-            gaussAlgorithmData.operationsOnPass.set(gaussAlgorithmData.pass,
-                    gaussAlgorithmData.operationsOnPass.get(gaussAlgorithmData.pass) + 1);
+            gaussData.visualizedOperations.add(gaussData.pass + "::mult::"
+                    + gaussData.ignoreRowsAboveNeq + "::" + factor);
+            gaussData.operationsOnPass.set(gaussData.pass,
+                    gaussData.operationsOnPass.get(gaussData.pass) + 1);
         }
     }
 
-    private static void eliminateElementsBelowFirst(GaussAlgorithmData gaussAlgorithmData) {
-        for (int i = gaussAlgorithmData.ignoreRowsAboveNeq + 1; i < matrix.length; i++) {
-            if (!(Objects.equals(matrix[i][gaussAlgorithmData.firstColumnDifferentFromZero].getNum(), BigInteger.ZERO)
-                    && Objects.equals(matrix[i][gaussAlgorithmData.firstColumnDifferentFromZero].getDen(), BigInteger.ONE))) {
-                Fraction factor = new Fraction(matrix[i][gaussAlgorithmData.firstColumnDifferentFromZero].getNum().multiply(BigInteger.valueOf(-1)),
-                        matrix[i][gaussAlgorithmData.firstColumnDifferentFromZero].getDen());
-                GaussMatrix.add(factor, gaussAlgorithmData.ignoreRowsAboveNeq, i);
-                gaussAlgorithmData.visualizedOperations.add(gaussAlgorithmData.pass + "::add::" + i + "::" + gaussAlgorithmData.ignoreRowsAboveNeq + "::" + factor);
-                gaussAlgorithmData.operationsOnPass.set(gaussAlgorithmData.pass,
-                        gaussAlgorithmData.operationsOnPass.get(gaussAlgorithmData.pass) + 1);
+    private static void eliminateElementsBelowFirst(GaussAlgorithmData gaussData) {
+        for (int i = gaussData.ignoreRowsAboveNeq + 1; i < matrix.length; i++) {
+            if (!(Objects
+                    .equals(matrix[i][gaussData.firstColumnDifferentFromZero].getNum(), BigInteger.ZERO)
+                    && Objects
+                    .equals(matrix[i][gaussData.firstColumnDifferentFromZero].getDen(), BigInteger.ONE))) {
+                Fraction factor =
+                        new Fraction(matrix[i][gaussData.firstColumnDifferentFromZero]
+                                .getNum()
+                                .multiply(BigInteger.valueOf(-1)),
+                        matrix[i][gaussData.firstColumnDifferentFromZero].getDen());
+                GaussMatrix.add(factor, gaussData.ignoreRowsAboveNeq, i);
+                gaussData.visualizedOperations.add(
+                        gaussData.pass + "::add::" + i + "::"
+                        + gaussData.ignoreRowsAboveNeq + "::"
+                                + factor
+                );
+                gaussData.operationsOnPass.set(gaussData.pass,
+                        gaussData.operationsOnPass.get(gaussData.pass) + 1);
             }
         }
     }

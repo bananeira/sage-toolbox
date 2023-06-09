@@ -16,6 +16,8 @@ public class Fraction {
             this.numerator = this.numerator.multiply(BigInteger.valueOf(-1));
             this.denominator = this.denominator.multiply(BigInteger.valueOf(-1));
         }
+
+        shortenFractionsMax();
     }
 
     public Fraction(Fraction fraction) {
@@ -26,6 +28,8 @@ public class Fraction {
             this.denominator = this.denominator.multiply(BigInteger.valueOf(-1));
             this.numerator = this.numerator.multiply(BigInteger.valueOf(-1));
         }
+
+        shortenFractionsMax();
     }
 
     public Fraction() {
@@ -39,6 +43,8 @@ public class Fraction {
 
     public void setNum(BigInteger numerator) {
         this.numerator = numerator;
+
+        shortenFractionsMax();
     }
 
     public BigInteger getDen() {
@@ -54,6 +60,8 @@ public class Fraction {
                 this.denominator = denominator;
             }
         }
+
+        shortenFractionsMax();
     }
 
     public void shortenFractionsMax() {
@@ -90,6 +98,14 @@ public class Fraction {
     public void multiply(BigInteger factor) {
         this.numerator = this.numerator.multiply(factor);
         shortenFractionsMax();
+    }
+
+    public void invert() {
+        BigInteger temp = this.numerator;
+        this.numerator = this.denominator;
+        if (temp.compareTo(BigInteger.ZERO) != 0) {
+            this.denominator = temp;
+        }
     }
 
     public void multiply(Fraction fraction) {
