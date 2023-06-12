@@ -73,8 +73,9 @@ public class GaussAlgorithm {
                             .add(gaussData.pass + "::swap::" + gaussData.ignoreRowsAboveNeq + "::" + i);
                     gaussData.operationsOnPass
                             .set(gaussData.pass,
-                            gaussData.operationsOnPass.
-                                    get(gaussData.pass) + 1);
+                            gaussData.operationsOnPass
+                                    .get(gaussData.pass) + 1);
+                    return;
                 }
             }
         }

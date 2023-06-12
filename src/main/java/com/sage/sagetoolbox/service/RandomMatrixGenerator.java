@@ -12,9 +12,9 @@ public class RandomMatrixGenerator {
         List<Integer> notFreeVarsList = new ArrayList<>();
         List<String> elementList = new ArrayList<>();
         boolean removeNotFreeVar = false;
-        int amountOfRandomOperations = random.nextInt(30) + 15;
-        int addsAtBeginning = 12;
-        int swapsLeft = 4;
+        int amountOfRandomOperations = random.nextInt(30) + 50;
+        int addsAtBeginning = 15;
+        int swapsLeft = 6;
 
         if (numOfFreeVars > n || numOfFreeVars < -1) {
             return null;
@@ -68,7 +68,7 @@ public class RandomMatrixGenerator {
             }
 
             while (swapsLeft == 0 && randomOperation == 0) {
-                randomOperation = random.nextInt(3);
+                randomOperation = random.nextInt(2) + 1;
             }
 
             switch (randomOperation) {
