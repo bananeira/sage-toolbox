@@ -16,11 +16,12 @@ public class RandomGaussMatrixController {
             @RequestParam(value = "useFractions") boolean useFractions,
             @RequestParam(value = "m") int m,
             @RequestParam(value = "n") int n,
-            @RequestParam(value = "numOfFreeVars") int numOfFreeVars
+            @RequestParam(value = "numOfFreeVars") int numOfFreeVars,
+            @RequestParam(value = "unsolvable") boolean unsolvable
             ) throws Exception {
 
         return ResponseEntity.ok().body(
-                RandomMatrixGenerator.generateRandomMatrix(max, useFractions, m, n, numOfFreeVars)
+                RandomMatrixGenerator.generateRandomMatrix(max, useFractions, m, n, numOfFreeVars, unsolvable)
         );
     }
 }

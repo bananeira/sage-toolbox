@@ -4,23 +4,24 @@ import java.math.BigInteger;
 import java.util.*;
 
 import static com.sage.sagetoolbox.service.GaussMatrix.getMatrix;
+import static java.lang.Math.sqrt;
 
 public class RandomMatrixGenerator {
-    public static List<String> generateRandomMatrix(int max, boolean useFractions, int m, int n, int numOfFreeVars) throws Exception {
+    public static List<String> generateRandomMatrix(int max, boolean useFractions, int m, int n, int numOfFreeVars, boolean unsolvable) throws Exception {
         Random random = new Random();
         Set<Integer> freeVars = new TreeSet<>();
         List<Integer> notFreeVarsList = new ArrayList<>();
         List<String> elementList = new ArrayList<>();
         boolean removeNotFreeVar = false;
-        int amountOfRandomOperations = random.nextInt(30) + 50;
-        int addsAtBeginning = 15;
-        int swapsLeft = 6;
+        int amountOfRandomOperations = random.nextInt(20) + 20;
+        int addsAtBeginning = 12;
+        int swapsLeft = 5;
 
         if (numOfFreeVars > n || numOfFreeVars < -1) {
             return null;
         }
 
-        if (numOfFreeVars == -1) {
+        if (numOfFreeVars == -1 || unsolvable) {
             numOfFreeVars = random.nextInt(n);
         }
 
@@ -46,12 +47,24 @@ public class RandomMatrixGenerator {
                 removeNotFreeVar = false;
             }
 
+            if (!unsolvable || i != m - 1) {
+                for (int j = 0; j <= n; j++) {
+                    if (notFreeVarsList.size() > 0 && j == notFreeVarsList.get(0)) {
+                        elementList.add("1");
+                        removeNotFreeVar = true;
+                    } else if (notFreeVarsList.size() > 0 && j > notFreeVarsList.get(0)) {
+                        elementList.add(generateRandomFractionAsString((int) sqrt(max), useFractions));
+                    } else {
+                        elementList.add("0");
+                    }
+                }
+            }
+        }
+
+        if (unsolvable) {
             for (int j = 0; j <= n; j++) {
-                if (notFreeVarsList.size() > 0 && j == notFreeVarsList.get(0)) {
+                if (j == n) {
                     elementList.add("1");
-                    removeNotFreeVar = true;
-                } else if (notFreeVarsList.size() > 0 && j > notFreeVarsList.get(0)) {
-                    elementList.add(generateRandomFractionAsString(max, useFractions));
                 } else {
                     elementList.add("0");
                 }
@@ -89,7 +102,7 @@ public class RandomMatrixGenerator {
                     }
 
                     Fraction addFactor = generateRandomFraction(max, useFractions);
-                    int maxAttempts = 15;
+                    int maxAttempts = 35;
                     int newMax = max;
 
                     if (m > 1) GaussMatrix.add(addFactor, addFrom, addTo);
@@ -114,7 +127,7 @@ public class RandomMatrixGenerator {
                 case 2 -> {
                     int multTo = getRandomFilledRow(m);
                     Fraction multFactor = generateRandomFraction(max, useFractions);
-                    int maxAttempts = 15;
+                    int maxAttempts = 35;
                     int newMax = max;
 
                     GaussMatrix.multiply(multTo, multFactor);
