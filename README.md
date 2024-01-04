@@ -1,2 +1,2 @@
 # sage-toolbox
-Remember: you don't have to look at this, so be warned..
+be warned, you don't have to look at this
